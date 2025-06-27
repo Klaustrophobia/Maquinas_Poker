@@ -11,6 +11,7 @@ export async function GET(req: NextRequest) {
     const result = await db.request().query('SELECT * FROM Finanzas');
     return NextResponse.json(result.recordset);
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: 'Error al obtener finanzas' }, { status: 500 });
   }
 }
@@ -30,6 +31,7 @@ export async function POST(req: NextRequest) {
       .query('INSERT INTO Finanzas (descripcion, monto) VALUES (@descripcion, @monto)');
     return NextResponse.json({ message: 'Registro agregado' });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: 'Error al agregar registro' }, { status: 500 });
   }
 }
@@ -50,6 +52,7 @@ export async function PUT(req: NextRequest) {
       .query('UPDATE Finanzas SET descripcion=@descripcion, monto=@monto WHERE id=@id');
     return NextResponse.json({ message: 'Registro actualizado' });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: 'Error al actualizar' }, { status: 500 });
   }
 }
@@ -65,6 +68,7 @@ export async function DELETE(req: NextRequest) {
     await db.request().input('id', id).query('DELETE FROM Finanzas WHERE id=@id');
     return NextResponse.json({ message: 'Registro eliminado' });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: 'Error al eliminar' }, { status: 500 });
   }
 }

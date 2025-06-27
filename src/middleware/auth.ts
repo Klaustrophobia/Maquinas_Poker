@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 export interface AuthPayload {
   id: number;
@@ -7,7 +7,7 @@ export interface AuthPayload {
   role: 'admin' | 'cliente' | 'tecnico';
 }
 
-export function authenticateRole(roles: AuthPayload['role'][]): any {
+export function authenticateRole(roles: AuthPayload['role'][]): (req: Request) => Promise<NextResponse | null> {
   return async (req: Request): Promise<NextResponse | null> => {
     const authHeader = req.headers.get('authorization');
     const token = authHeader?.split(' ')[1];
@@ -21,6 +21,7 @@ export function authenticateRole(roles: AuthPayload['role'][]): any {
       // Si todo bien, dejar que continúe
       return null;
     } catch (error) {
+      console.error(error);
       return NextResponse.json({ message: 'Token inválido' }, { status: 401 });
     }
   };

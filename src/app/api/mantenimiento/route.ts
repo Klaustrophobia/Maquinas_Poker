@@ -8,9 +8,10 @@ export async function GET(req: NextRequest) {
 
   try {
     const db = await connectDB();
-    const result = await db.request().query('SELECT * FROM Mantenimiento');
+    const result = await db.request().query('SELECT * FROM Mantenimientos');
     return NextResponse.json(result.recordset);
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: 'Error al obtener mantenimientos' }, { status: 500 });
   }
 }
@@ -30,6 +31,7 @@ export async function POST(req: NextRequest) {
       .query("INSERT INTO Mantenimiento (descripcion, maquina_id, estado) VALUES (@descripcion, @maquina_id, 'pendiente')");
     return NextResponse.json({ message: 'Falla reportada' });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: 'Error al reportar falla' }, { status: 500 });
   }
 }
@@ -48,6 +50,7 @@ export async function PUT(req: NextRequest) {
       .query("UPDATE Mantenimiento SET estado='resuelto' WHERE id=@id");
     return NextResponse.json({ message: 'Estado actualizado a resuelto' });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: 'Error al actualizar estado' }, { status: 500 });
   }
 }
