@@ -11,6 +11,7 @@ export async function GET(req: NextRequest) {
     const result = await db.request().query('SELECT * FROM Inventario');
     return NextResponse.json(result.recordset);
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: 'Error al obtener inventario' }, { status: 500 });
   }
 }
@@ -30,6 +31,7 @@ export async function POST(req: NextRequest) {
       .query('INSERT INTO Inventario (nombre, estado) VALUES (@nombre, @estado)');
     return NextResponse.json({ message: 'Máquina agregada' });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: 'Error al agregar máquina' }, { status: 500 });
   }
 }
@@ -50,6 +52,7 @@ export async function PUT(req: NextRequest) {
       .query('UPDATE Inventario SET nombre=@nombre, estado=@estado WHERE id=@id');
     return NextResponse.json({ message: 'Máquina actualizada' });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: 'Error al actualizar' }, { status: 500 });
   }
 }
@@ -65,6 +68,7 @@ export async function DELETE(req: NextRequest) {
     await db.request().input('id', id).query('DELETE FROM Inventario WHERE id=@id');
     return NextResponse.json({ message: 'Máquina eliminada' });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: 'Error al eliminar' }, { status: 500 });
   }
 }
