@@ -4,52 +4,90 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
+//POST para registrar usuarios
 export async function POST(req: NextRequest) {
+  // Autenticación de rol para permitir solo a 'admin' registrar usuarios
   const auth = await authenticateRole(['admin'])(req);
-  if (auth) return auth;
+  if (auth) {
+    // Si authenticateRole devuelve una respuesta (ej. un error de autenticación), la devolvemos.
+    return auth;
+  }
 
   try {
     const body = await req.json();
     const { nombre, password_hash, rol } = body;
+
+    // Conexión a la base de datos
     const db = await connectDB();
 
+    // Hashear la contraseña antes de guardarla
     const hashedPassword = await bcrypt.hash(password_hash, 10);
+
+    // Insertar el nuevo usuario en la base de datos
     await db
       .request()
       .input('nombre', nombre)
       .input('password_hash', hashedPassword)
       .input('rol', rol)
-      .query('INSERT INTO Usuarios (nombre, password_hash, rol) VALUES (@nombre, @password, @rol)');
+      .query('INSERT INTO Usuarios (nombre, password_hash, rol) VALUES (@nombre, @password_hash, @rol)');
 
-    return NextResponse.json({ message: 'Usuario registrado' });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: 'Error en registro' }, { status: 500 });
+    // Respuesta exitosa
+    return NextResponse.json({ message: 'Usuario registrado exitosamente' }, { status: 201 }); // 201 Created
+  } catch (error) { // Captura el error y lo tipa como 'unknown' para seguridad
+    if (error instanceof Error) {
+      console.error('Error al registrar usuario (POST):', error.message);
+      return NextResponse.json({ error: `Error en registro: ${error.message}` }, { status: 500 });
+    }
+    console.error('Error desconocido al registrar usuario (POST):', error);
+    return NextResponse.json({ error: 'Error desconocido al registrar usuario' }, { status: 500 });
   }
 }
 
+//GET para el login de usuarios
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const nombre = searchParams.get('nombre');
     const password_hash = searchParams.get('password_hash');
+
+    // Validar que se proporcionen nombre y password_hash
+    if (!nombre || !password_hash) {
+      return NextResponse.json({ error: 'Se requiere nombre y contraseña' }, { status: 400 }); // 400 Bad Request
+    }
+
+    // Conexión a la base de datos
     const db = await connectDB();
 
+    // Buscar el usuario por nombre de usuario
     const result = await db.request().input('nombre', nombre).query('SELECT * FROM Usuarios WHERE nombre=@nombre');
     const user = result.recordset[0];
 
-    if (!user) return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 });
+    // Si el usuario no se encuentra
+    if (!user) {
+      return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 });
+    }
 
-    const valid = await bcrypt.compare(password_hash || '', user.password_hash);
-    if (!valid) return NextResponse.json({ error: 'Contraseña incorrecta' }, { status: 401 });
+    // Comparar la contraseña proporcionada con la contraseña hasheada en la BD
+    const valid = await bcrypt.compare(password_hash, user.password_hash as string); // Añadimos 'as string' para asegurar el tipo si 'user.password_hash' pudiera ser null/undefined
+    if (!valid) {
+      return NextResponse.json({ error: 'Contraseña incorrecta' }, { status: 401 }); // 401 Unauthorized
+    }
 
-    const token = jwt.sign({ id: user.id, nombre: user.nombre, role: user.rol }, process.env.JWT_SECRET as string, {
-      expiresIn: '8h',
-    });
+    // Generar un token JWT para el usuario autenticado
+    const token = jwt.sign(
+      { id: user.id, nombre: user.nombre, rol: user.rol },
+      process.env.JWT_SECRET as string,
+      { expiresIn: '8h' } 
+    );
 
+    // Respuesta exitosa con el token
     return NextResponse.json({ token });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: 'Error en login' }, { status: 500 });
+    if (error instanceof Error) {
+      console.error('Error en login (GET):', error.message);
+      return NextResponse.json({ error: `Error en login: ${error.message}` }, { status: 500 });
+    }
+    console.error('Error desconocido en login (GET):', error);
+    return NextResponse.json({ error: 'Error desconocido en login' }, { status: 500 });
   }
 }
