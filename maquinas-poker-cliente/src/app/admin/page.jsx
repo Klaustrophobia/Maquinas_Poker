@@ -1,3 +1,5 @@
+'use client';
+
 import { useAuth } from '@/app/context/AuthContext';
 
 export default function AdminDashboard() {
@@ -10,17 +12,14 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-lg shadow">
           <h2 className="text-xl font-semibold mb-4">Gestión de Usuarios</h2>
-          {/* Contenido específico para admin */}
         </div>
         
         <div className="bg-white p-6 rounded-lg shadow">
           <h2 className="text-xl font-semibold mb-4">Reportes</h2>
-          {/* Contenido específico para admin */}
         </div>
         
         <div className="bg-white p-6 rounded-lg shadow">
           <h2 className="text-xl font-semibold mb-4">Configuración</h2>
-          {/* Contenido específico para admin */}
         </div>
       </div>
       

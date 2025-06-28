@@ -7,6 +7,7 @@ export default function AdminLayout({ children }) {
   const router = useRouter();
 
   useEffect(() => {
+    console.log("Usuario actual:", user);
     if (!loading && (!user || user.role !== 'admin')) {
       router.push('/login');
     }

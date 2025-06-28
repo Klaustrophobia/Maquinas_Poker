@@ -1,4 +1,5 @@
 'use client';
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext';
@@ -12,7 +13,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
@@ -23,9 +24,8 @@ export default function LoginPage() {
       if (response.ok) {
         const user = await response.json();
         login(user);
-        
-        // Redirigir según rol
-        switch(user.role) {
+
+        switch (user.role) {
           case 'admin':
             router.push('/admin');
             break;
@@ -48,19 +48,19 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-black text-white">
+      <div className="bg-gray-900 p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold mb-6 text-center">Inicio de Sesión</h1>
-        
+
         {error && (
-          <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">
+          <div className="mb-4 p-2 bg-red-500 text-white rounded">
             {error}
           </div>
         )}
-        
+
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="email">
+            <label className="block mb-2" htmlFor="email">
               Correo Electrónico
             </label>
             <input
@@ -68,13 +68,13 @@ export default function LoginPage() {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg"
+              className="w-full px-3 py-2 border rounded-lg text-black"
               required
             />
           </div>
-          
+
           <div className="mb-6">
-            <label className="block text-gray-700 mb-2" htmlFor="password">
+            <label className="block mb-2" htmlFor="password">
               Contraseña
             </label>
             <input
@@ -82,14 +82,14 @@ export default function LoginPage() {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg"
+              className="w-full px-3 py-2 border rounded-lg text-black"
               required
             />
           </div>
-          
+
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
           >
             Iniciar Sesión
           </button>
