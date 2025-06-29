@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext';
 
@@ -18,7 +19,7 @@ export default function LoginPage() {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
       });
 
       if (response.ok) {
@@ -49,7 +50,14 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black text-white">
-      <div className="bg-gray-900 p-8 rounded-lg shadow-md w-full max-w-md">
+      <div className="bg-gray-900 p-8 rounded-lg shadow-md w-full max-w-md relative">
+        {/* Botón Volver al inicio */}
+        <Link
+          href="/"
+          className="absolute top-4 left-4 text-blue-400 hover:text-blue-600 font-semibold"          >
+          ← Volver al inicio
+        </Link>
+
         <h1 className="text-2xl font-bold mb-6 text-center">Inicio de Sesión</h1>
 
         {error && (
