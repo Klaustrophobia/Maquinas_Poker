@@ -1,16 +1,22 @@
-import { connectDB } from '@/lib/db';
+// import { connectDB } from '@/lib/db';
 import { authenticateRole } from '@/middleware/auth';
 import { NextRequest, NextResponse } from 'next/server';
+// importamos la conexion de TypeORM y la entidad
+import { getDataSource } from '@/data-source';
+import { Mantenimiento } from '@/entity/Mantenimiento';
 
 export async function GET(req: NextRequest) {
   const auth = await authenticateRole(['admin', 'tecnico'])(req);
   if (auth) return auth;
 
   try {
-    const db = await connectDB();
-    const result = await db.request().query('SELECT * FROM Mantenimientos');
-    return NextResponse.json(result.recordset);
-  } catch (error: unknown) {
+    // Conexión a la base de datos
+    const db = await getDataSource();
+    const mantenimientoRepository = db.getRepository(Mantenimiento);
+
+    const result = await mantenimientoRepository.find();
+    return NextResponse.json(result);
+  } catch (error) {
     // Manejo de errores: imprime en consola para depuración
     if (error instanceof Error) {
       console.error('Error al obtener mantenimientos:', error.message);
@@ -29,25 +35,32 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { orden_trabajo_id, tipo, descripcion, acciones_realizadas, repuestos_utilizados, costo_estimado, costo_real, fecha_programada, fecha_realizacion, tecnico_id, resultado, observaciones } = body;
-    const db = await connectDB();
-    await db
-      .request()
-      .input('orden_trabajo_id', orden_trabajo_id)
-      .input('tipo', tipo)
-      .input('descripcion', descripcion)
-      .input('acciones_realizadas', acciones_realizadas)
-      .input('repuestos_utilizados', repuestos_utilizados)
-      .input('costo_estimado', costo_estimado)
-      .input('costo_real', costo_real)
-      .input('fecha_programada', fecha_programada)
-      .input('fecha_realizacion', fecha_realizacion)
-      .input('tecnico_id', tecnico_id)
-      .input('resultado', resultado)
-      .input('observaciones', observaciones)
-      .query("INSERT INTO Mantenimientos (orden_trabajo_id, tipo, descripcion, acciones_realizadas, repuestos_utilizados, costo_estimado, costo_real, fecha_programada, fecha_realizacion, tecnico_id, resultado, observaciones) VALUES (@orden_trabajo_id, @tipo, @descripcion, @acciones_realizadas, @repuestos_utilizados, @costo_estimado, @costo_real, @fecha_programada, @fecha_realizacion, @tecnico_id, @resultado, @observaciones)");
-    return NextResponse.json({ message: 'Falla reportada' });
+    // const db = await connectDB();
+    if (!orden_trabajo_id || !tipo || !descripcion || !acciones_realizadas || !repuestos_utilizados || !costo_estimado || !costo_real || !fecha_programada || !fecha_realizacion || !tecnico_id || !resultado) {
+      return NextResponse.json({ error: 'Faltan campos requeridos' }, { status: 400 });
+    }
+    // Conexión a la base de datos
+    const db = await getDataSource();
+    const mantenimientoRepository = db.getRepository(Mantenimiento);
+    const nuevoMantenimiento = mantenimientoRepository.create({
+      orden_trabajo_id,
+      tipo,
+      descripcion,
+      acciones_realizadas,
+      repuestos_utilizados,
+      costo_estimado,
+      costo_real,
+      fecha_programada,
+      fecha_realizacion,
+      tecnico_id,
+      resultado,
+      observaciones
+    });
+    await mantenimientoRepository.save(nuevoMantenimiento);
+    // Respuesta exitosa
+    return NextResponse.json({ message: 'Falla reportada exitosamente' });
   } 
-  catch (error: unknown) {
+  catch (error) {
     // Manejo de errores: imprime en consola para depuración
     if (error instanceof Error) {
       console.error('Error al reportar falla:', error.message);
@@ -66,21 +79,29 @@ export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
     const { id } = body;
-    const db = await connectDB();
-    await db
-      .request()
-      .input('id', id)
-      .query("UPDATE ordenes_trabajo SET estado='resuelto' WHERE id=@id");
-    return NextResponse.json({ message: 'Estado actualizado a resuelto' });
-  } 
-  catch (error: unknown) {
+    if (!id) {
+      return NextResponse.json({ error: 'Falta el ID del mantenimiento' }, { status: 400 });
+    }
+    // Conexión a la base de datos
+    const db = await getDataSource();
+    const mantenimientoRepository = db.getRepository(Mantenimiento);
+    // Verificar si el mantenimiento existe
+    const mantenimiento = await mantenimientoRepository.findOne({ where: { id } });
+    if (!mantenimiento) {
+      return NextResponse.json({ error: 'Mantenimiento no encontrado' }, { status: 404 });
+    }
+    mantenimiento.resultado = 'Realizado';
+    await mantenimientoRepository.save(mantenimiento);
+    return NextResponse.json({ message: 'Estado actualizado a realizado' });
+  }
+  catch (error) {
     // Manejo de errores: imprime en consola para depuración
     if (error instanceof Error) {
-      console.error('Error al actualizar estado:', error.message);
-      return NextResponse.json({ error: `Error en actualizar estado: ${error.message}` }, { status: 500 });
+      console.error('Error al actualizar resultado:', error.message);
+      return NextResponse.json({ error: `Error en actualizar resultado: ${error.message}` }, { status: 500 });
     }
     // Si el error no es una instancia de Error, es un error desconocido
-    console.error('Error desconocido al actualizar estado:', error);
-    return NextResponse.json({ error: 'Error desconocido al actualizar estado' }, { status: 500 });
+    console.error('Error desconocido al actualizar resultado:', error);
+    return NextResponse.json({ error: 'Error desconocido al actualizar resultado' }, { status: 500 });
   }
 }

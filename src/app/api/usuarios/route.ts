@@ -1,8 +1,11 @@
-import { connectDB } from '@/lib/db';
+// import { connectDB } from '@/lib/db';
 import { authenticateRole } from '@/middleware/auth';
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+// importamos la conexion de TypeORM y la entidad
+import { getDataSource } from '@/data-source';
+import { User } from '@/entity/User';
 
 //POST para registrar usuarios
 export async function POST(req: NextRequest) {
@@ -16,23 +19,33 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { nombre, password_hash, rol } = body;
+    if (!nombre || !password_hash || !rol) {
+      return NextResponse.json({ error: 'Faltan campos requeridos (nombre, password, rol)' }, { status: 400 });
+    }
 
     // Conexión a la base de datos
-    const db = await connectDB();
+    const db = await getDataSource();
+    const userRepository = db.getRepository(User);
+
+    // Verificar si el usuario ya existe
+    const existingUser = await userRepository.findOne({ where: { nombre: nombre } });
+    if (existingUser) {
+      return NextResponse.json({ error: 'El nombre de usuario ya existe' }, { status: 409 });
+    }
 
     // Hashear la contraseña antes de guardarla
     const hashedPassword = await bcrypt.hash(password_hash, 10);
 
     // Insertar el nuevo usuario en la base de datos
-    await db
-      .request()
-      .input('nombre', nombre)
-      .input('password_hash', hashedPassword)
-      .input('rol', rol)
-      .query('INSERT INTO Usuarios (nombre, password_hash, rol) VALUES (@nombre, @password_hash, @rol)');
+    const newUser = userRepository.create({
+      nombre: nombre,
+      password_hash: hashedPassword,
+      rol,
+    });
+    await userRepository.save(newUser);
 
     // Respuesta exitosa
-    return NextResponse.json({ message: 'Usuario registrado exitosamente' }, { status: 201 }); // 201 Created
+    return NextResponse.json({ message: 'Usuario registrado exitosamente' }, { status: 201 });
   } catch (error) { // Captura el error y lo tipa como 'unknown' para seguridad
     if (error instanceof Error) {
       console.error('Error al registrar usuario (POST):', error.message);
@@ -56,11 +69,11 @@ export async function GET(req: NextRequest) {
     }
 
     // Conexión a la base de datos
-    const db = await connectDB();
+    const db = await getDataSource();
+    const userRepository = db.getRepository(User);
 
     // Buscar el usuario por nombre de usuario
-    const result = await db.request().input('nombre', nombre).query('SELECT * FROM Usuarios WHERE nombre=@nombre');
-    const user = result.recordset[0];
+    const user = await userRepository.findOne({ where: { nombre: nombre } });
 
     // Si el usuario no se encuentra
     if (!user) {
@@ -68,9 +81,9 @@ export async function GET(req: NextRequest) {
     }
 
     // Comparar la contraseña proporcionada con la contraseña hasheada en la BD
-    const valid = await bcrypt.compare(password_hash, user.password_hash as string); // Añadimos 'as string' para asegurar el tipo si 'user.password_hash' pudiera ser null/undefined
+    const valid = await bcrypt.compare(password_hash, user.password_hash as string);
     if (!valid) {
-      return NextResponse.json({ error: 'Contraseña incorrecta' }, { status: 401 }); // 401 Unauthorized
+      return NextResponse.json({ error: 'Contraseña incorrecta' }, { status: 401 });
     }
 
     // Generar un token JWT para el usuario autenticado

@@ -11,8 +11,12 @@ export async function GET(req: NextRequest) {
     const result = await db.request().query('SELECT * FROM Finanzas');
     return NextResponse.json(result.recordset);
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: 'Error al obtener finanzas' }, { status: 500 });
+    if (error instanceof Error) {
+      console.error('Error al obtener finanzas:', error.message);
+      return NextResponse.json({ error: `Error en obtener finanzas: ${error.message}` }, { status: 500 });
+    }
+    console.error('Error desconocido al obtener finanzas:', error);
+    return NextResponse.json({ error: 'Error desconocido al obtener finanzas' }, { status: 500 });
   }
 }
 
@@ -52,8 +56,12 @@ export async function PUT(req: NextRequest) {
       .query('UPDATE Finanzas SET descripcion=@descripcion, monto=@monto WHERE id=@id');
     return NextResponse.json({ message: 'Registro actualizado' });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: 'Error al actualizar' }, { status: 500 });
+    if (error instanceof Error) {
+      console.error('Error al actualizar registro de la tabla finanzas:', error.message);
+      return NextResponse.json({ error: `Error en actualizar registro de la tabla finanzas: ${error.message}` }, { status: 500 });
+    }
+    console.error('Error desconocido al actualizar registro de la tabla finanzas:', error);
+    return NextResponse.json({ error: 'Error desconocido al actualizar registro de la tabla finanzas' }, { status: 500 });
   }
 }
 
@@ -68,7 +76,11 @@ export async function DELETE(req: NextRequest) {
     await db.request().input('id', id).query('DELETE FROM Finanzas WHERE id=@id');
     return NextResponse.json({ message: 'Registro eliminado' });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: 'Error al eliminar' }, { status: 500 });
+    if (error instanceof Error) {
+      console.error('Error al eliminar registro de finanzas:', error.message);
+      return NextResponse.json({ error: `Error en eliminar registro de finanzas: ${error.message}` }, { status: 500 });
+    }
+    console.error('Error desconocido al eliminar registro de finanzas:', error);
+    return NextResponse.json({ error: 'Error desconocido al eliminar registro de finanzas' }, { status: 500 });
   }
 }
