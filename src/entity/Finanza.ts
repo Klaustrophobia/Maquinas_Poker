@@ -1,4 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Decimal128, ManyToOne, JoinColumn } from 'typeorm';
+import { Maquina } from './Maquina';
+import { User } from './User';
+import { Transaccion } from './Transaccion';
+import { Proveedor } from './Proveedor';
 
 @Entity('finanzas')
 export class Finanza {
@@ -6,32 +10,48 @@ export class Finanza {
   id!: number;
 
   @Column()
-  nombre!: string;
+  tipo_movimiento!: string;
 
   @Column({ unique: true })
-  email!: string;
+  descripcion!: string;
 
   @Column()
-  password_hash!: string;
+  monto!: Decimal128;
 
   @Column()
-  rol!: string;
+  moneda!: string;
 
   @Column()
-  telefono!: string;
+  fecha_movimiento!: Date;
 
-  @Column({ default: true })
-  activo!: boolean;
+  @ManyToOne(() => Maquina)
+      @JoinColumn({ name: 'maquina_id' })
+  maquina_id!: Maquina;
+
+  @ManyToOne(() => User)
+      @JoinColumn({ name: 'usuario_id' })
+  usuario_id!: User;
+
+  @ManyToOne(() => Transaccion)
+      @JoinColumn({ name: 'transaccion_id' })
+  transaccion_id!: Transaccion;
+
+  @ManyToOne(() => Proveedor)
+      @JoinColumn({ name: 'proveedor_id' })
+  proveedor_id!: Proveedor;
 
   @Column()
-  ultimo_login!: Date;
+  orden_trabajo_id!: number;
 
   @Column()
-  mfa_secret!: string;
+  referencia_externa!: string;
 
   @Column()
-  fecha_creacion!: Date;
+  notas!: string;
 
   @Column()
-  fecha_actualizacion!: Date;
+  creado_en!: Date;
+
+  @Column()
+  actualizado_en!: Date;
 }

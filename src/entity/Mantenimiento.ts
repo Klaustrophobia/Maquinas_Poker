@@ -1,12 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, Decimal128 } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Decimal128, ManyToOne, JoinColumn } from 'typeorm';
+import { OrdenTrabajo } from './OrdenesTrabajo';
+import { Tecnico } from './Tecnico';
 
 @Entity('mantenimientos')
 export class Mantenimiento {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
-  orden_trabajo_id!: string;
+  @ManyToOne(() => OrdenTrabajo)
+  @JoinColumn({ name: 'orden_trabajo_id' })
+  ordenTrabajo!: OrdenTrabajo;
 
   @Column()
   tipo!: string;
@@ -32,8 +35,9 @@ export class Mantenimiento {
   @Column()
   fecha_realizacion!: Date;
 
-  @Column()
-  tecnico_id!: number;
+  @ManyToOne(() => Tecnico)
+  @JoinColumn({ name: 'tecnico_id' })
+  tecnico!: Tecnico;
 
   @Column()
   resultado!: string;

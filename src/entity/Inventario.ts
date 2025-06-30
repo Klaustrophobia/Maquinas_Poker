@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Repuesto } from './Repuesto';
 
 @Entity('inventarios')
@@ -6,10 +6,8 @@ export class Inventario {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
-  repuesto_id!: number;
-
-  @ManyToOne(() => Repuesto, (repuesto) => repuesto.inventario)
+  @ManyToOne(() => Repuesto)
+    @JoinColumn({ name: 'repuesto_id' })
   repuesto!: Repuesto;
 
   @Column()
@@ -31,7 +29,7 @@ export class Inventario {
   ultima_salida_cantidad!: number;
 
   @Column()
-  stock_minimo!: number;
+  stock!: number;
 
   @Column()
   notas!: string;

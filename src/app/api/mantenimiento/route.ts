@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
     const db = await getDataSource();
     const mantenimientoRepository = db.getRepository(Mantenimiento);
     const nuevoMantenimiento = mantenimientoRepository.create({
-      orden_trabajo_id,
+      ordenTrabajo: { id: orden_trabajo_id }, // Asignamos la relación con la orden de trabajo
       tipo,
       descripcion,
       acciones_realizadas,
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
       costo_real,
       fecha_programada,
       fecha_realizacion,
-      tecnico_id,
+      tecnico: { id: tecnico_id },
       resultado,
       observaciones
     });
