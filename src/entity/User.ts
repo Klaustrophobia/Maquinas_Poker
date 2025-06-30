@@ -5,33 +5,33 @@ export class User {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column({ nullable: false })
   nombre!: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: false })
   email!: string;
 
-  @Column()
+  @Column({ nullable: false })
   password_hash!: string;
 
-  @Column()
-  rol!: string;
+  @Column({ nullable: true })
+  rol!: string | null;
 
-  @Column()
-  telefono!: string;
+  @Column({ nullable: true })
+  telefono!: string | null;
 
-  @Column({ default: true })
-  activo!: boolean;
+  @Column({ default: true, nullable: true })
+  activo!: boolean | null;
 
-  @Column()
-  ultimo_login!: Date;
+  @Column({ type: 'datetime', nullable: true })
+  ultimo_login!: Date | null;
 
-  @Column()
-  mfa_secret!: string;
+  @Column({ nullable: true })
+  mfa_secret!: string | null;
 
-  @Column()
-  fecha_creacion!: Date;
+  @Column({ type: 'datetime', nullable: true })
+  fecha_creacion!: Date | null;
 
-  @Column()
+  @Column({ type: 'datetime', nullable: false })
   fecha_actualizacion!: Date;
 }

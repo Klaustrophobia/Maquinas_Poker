@@ -11,37 +11,37 @@ export class Mantenimiento {
   @JoinColumn({ name: 'orden_trabajo_id' })
   ordenTrabajo!: OrdenTrabajo;
 
-  @Column()
+  @Column({nullable: false})
   tipo!: string;
 
-  @Column()
+  @Column({nullable: false})
   descripcion!: string;
 
-  @Column()
-  acciones_realizadas!: string;
+  @Column({nullable: true})
+  acciones_realizadas!: string | null;
 
-  @Column()
-  repuestos_utilizados!: string;
+  @Column({nullable: true})
+  repuestos_utilizados!: string | null;
 
-  @Column()
-  costo_estimado!: Decimal128;
+  @Column({nullable: true})
+  costo_estimado!: Decimal128 | null;
 
-  @Column()
-  costo_real!: Decimal128;
+  @Column({nullable: true})
+  costo_real!: Decimal128 | null;
 
-  @Column()
-  fecha_programada!: Date;
+  @Column({type: 'datetime', nullable: true})
+  fecha_programada!: Date | null;
 
-  @Column()
-  fecha_realizacion!: Date;
+  @Column({type: 'datetime', nullable: true})
+  fecha_realizacion!: Date | null;
 
   @ManyToOne(() => Tecnico)
   @JoinColumn({ name: 'tecnico_id' })
   tecnico!: Tecnico;
 
-  @Column()
-  resultado!: string;
+  @Column({nullable: true})
+  resultado!: string | null;
 
-  @Column()
-  observaciones!: string;
+  @Column({nullable: true})
+  observaciones!: string | null;
 }

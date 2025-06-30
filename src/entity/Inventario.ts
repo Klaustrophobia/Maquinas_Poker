@@ -10,33 +10,33 @@ export class Inventario {
     @JoinColumn({ name: 'repuesto_id' })
   repuesto!: Repuesto;
 
-  @Column()
+  @Column({ nullable: false })
   cantidad!: number;
 
-  @Column({ unique: true })
-  ubicacion_almacen!: string;
+  @Column({ unique: true, nullable: true })
+  ubicacion_almacen!: string | null;
 
-  @Column()
-  ultima_entrada_fecha!: Date;
+  @Column({ type: 'datetime', nullable: true })
+  ultima_entrada_fecha!: Date | null;
 
-  @Column()
-  ultima_entrada_cantidad!: number;
+  @Column({ nullable: true })
+  ultima_entrada_cantidad!: number | null;
 
-  @Column()
-  ultima_salida_fecha!: Date;
+  @Column({ type: 'datetime', nullable: true })
+  ultima_salida_fecha!: Date | null;
 
-  @Column()
-  ultima_salida_cantidad!: number;
+  @Column({ nullable: true })
+  ultima_salida_cantidad!: number | null;
 
-  @Column()
-  stock!: number;
+  @Column({ nullable: true })
+  stock!: number | null;
 
-  @Column()
-  notas!: string;
+  @Column({ nullable: true })
+  notas!: string | null;
 
-  @Column()
-  creado_en!: Date;
+  @Column({ type: 'datetime', nullable: false })
+  creado_en!: Date | null;
 
-  @Column()
-  actualizado_en!: Date;
+  @Column({ type: 'datetime', nullable: false })
+  actualizado_en!: Date | null;
 }

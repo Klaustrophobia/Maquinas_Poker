@@ -10,6 +10,6 @@ export class EvidenciaMantenimiento {
     @JoinColumn({ name: 'mantenimiento_id' })
     mantenimiento!: Mantenimiento;
 
-    @Column()
-    url_foto!: string;
+    @Column({ nullable: true })
+    url_foto!: string | null;
 }

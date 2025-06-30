@@ -5,30 +5,30 @@ export class Proveedor {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column()
+    @Column({ nullable: false })
     nombre!: string;
 
-    @Column()
-    contacto!: string;
+    @Column({ nullable: true })
+    contacto!: string | null;
 
-    @Column()
-    telefono!: string;
+    @Column({ nullable: true })
+    telefono!: string | null;
 
-    @Column()
-    email!: string;
+    @Column({ nullable: true })
+    email!: string | null;
 
-    @Column()
-    direccion!: string;
+    @Column({ nullable: true })
+    direccion!: string | null;
 
-    @Column()
-    rtn!: string;
+    @Column({ nullable: true })
+    rtn!: string | null;
 
-    @Column()
-    tipo_servicio!: string;
+    @Column({ nullable: true })
+    tipo_servicio!: string | null;
 
-    @Column()
-    calificacion!: number;
+    @Column({ nullable: true })
+    calificacion!: number | null;
 
-    @Column()
-    activo!: boolean;
+    @Column({ nullable: true })
+    activo!: boolean | null;
 }   

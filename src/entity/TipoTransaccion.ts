@@ -24,6 +24,6 @@ export class TipoTransaccion {
     @OneToMany(() => TipoTransaccion, tipoTransaccion => tipoTransaccion.padre)
     hijos!: TipoTransaccion[]; // La propiedad que contendrá un array de objetos hijos
 
-    @Column({ default: true })
-    activa!: boolean;
+    @Column({ default: true, nullable: true })
+    activa!: boolean | null;
 }

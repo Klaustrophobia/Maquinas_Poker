@@ -7,59 +7,59 @@ export class OrdenTrabajo {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column()
+    @Column({ nullable: false })
     codigo!: string;
 
     @ManyToOne(() => Maquina)
     @JoinColumn({ name: 'maquina_id' })
     maquina!: Maquina;
 
-    @Column()
-    tipo!: string;
+    @Column({ nullable: true })
+    tipo!: string | null;
 
-    @Column()
-    prioridad!: string;
+    @Column({ nullable: true })
+    prioridad!: string | null;
 
-    @Column()
-    estado!: string;
+    @Column({ nullable: true })
+    estado!: string | null;
 
-    @Column()
+    @Column({ nullable: false })
     descripcion!: string;
 
     @ManyToOne(() => Tecnico)
     @JoinColumn({ name: 'tecnico_id' })
     tecnico!: Tecnico;
 
-    @Column()
-    fecha_creacion!: Date;
+    @Column({ type: 'datetime', nullable: true })
+    fecha_creacion!: Date | null;
 
-    @Column()
-    fecha_asignacion!: Date;
+    @Column({ type: 'datetime', nullable: true })
+    fecha_asignacion!: Date | null;
 
-    @Column()
-    fecha_inicio!: Date;
+    @Column({ type: 'datetime', nullable: true })
+    fecha_inicio!: Date | null;
 
-    @Column()
-    fecha_finalizacion!: Date;
+    @Column({ type: 'datetime', nullable: true })
+    fecha_finalizacion!: Date | null;
 
-    @Column()
-    tiempo_estimado!: number;
+    @Column({ nullable: true })
+    tiempo_estimado!: number | null;
 
-    @Column()
-    tiempo_real!: number;
+    @Column({ nullable: true })
+    tiempo_real!: number | null;
 
-    @Column()
-    cliente_notificado!: boolean;
+    @Column({ nullable: true })
+    cliente_notificado!: boolean | null;
 
-    @Column()
-    firma_cliente!: string;
+    @Column({ nullable: true })
+    firma_cliente!: string | null;
 
-    @Column()
-    foto_finalizacion!: string;
+    @Column({ nullable: true })
+    foto_finalizacion!: string | null;
 
-    @Column()
-    calificacion_servicio!: number;
+    @Column({ nullable: true })
+    calificacion_servicio!: number | null;
 
-    @Column()
-    comentarios_cliente!: string;
+    @Column({ nullable: true })
+    comentarios_cliente!: string | null;
 }

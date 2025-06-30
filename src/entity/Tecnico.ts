@@ -10,36 +10,33 @@ export class Tecnico {
     @JoinColumn({ name: 'usuario_id' })
     usuario!: User;
 
-    @Column()
-    nombre!: string;
+    @Column({ nullable: true })
+    especialidad!: string | null;
 
-    @Column()
-    especialidad!: string;
+    @Column({ nullable: true })
+    disponibilidad!: string | null;
 
-    @Column()
-    disponibilidad!: string;
+    @Column({ nullable: true })
+    vehiculo_asignado!: string | null;
 
-    @Column()
-    vehiculo_asignado!: string;
+    @Column({ nullable: true })
+    herramienta_asignada!: string | null;
 
-    @Column()
-    herramienta_asignada!: string;
+    @Column({ nullable: true })
+    calificacion_promedio!: Decimal128 | null;
 
-    @Column()
-    calificacion_promedio!: Decimal128;
+    @Column({ nullable: true })
+    fecha_contratacion!: Date | null;
 
-    @Column()
-    fecha_contratacion!: Date;
+    @Column({ nullable: true })
+    ubicacion_actual!: string | null;
 
-    @Column()
-    ubicacion_actual!: string;
+    @Column({ nullable: true })
+    ultima_ubicacion_lat!: Decimal128 | null;
 
-    @Column()
-    ultima_ubicacion_lat!: Decimal128;
+    @Column({ nullable: true })
+    ultima_ubicacion_lon!: Decimal128 | null;
 
-    @Column()
-    ultima_ubicacion_lon!: Decimal128;
-
-    @Column()
-    ultima_actualizacion_ubicacion!: Date;
+    @Column({ type: 'datetime', nullable: true })
+    ultima_actualizacion_ubicacion!: Date | null;
 }

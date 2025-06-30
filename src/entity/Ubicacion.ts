@@ -5,33 +5,33 @@ export class Ubicacion {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column()
+    @Column({ nullable: false })
     nombre!: string;
 
-    @Column()
+    @Column({ nullable: false })
     direccion!: string;
 
-    @Column()
+    @Column( { nullable: false})
     ciudad!: string;
 
-    @Column()
-    codigo_postal!: string;
+    @Column({ nullable: true})
+    codigo_postal!: string | null;
 
-    @Column()
-    telefono!: string;
+    @Column({ nullable: true })
+    telefono!: string | null;
 
-    @Column()
-    responsable!: string;
+    @Column({ nullable: true })
+    responsable!: string | null;
 
-    @Column()
-    latitud!: Decimal128;
+    @Column({ nullable: true })
+    latitud!: Decimal128 | null;
 
-    @Column()
-    longitud!: Decimal128;
+    @Column({ nullable: true })
+    longitud!: Decimal128 | null;
 
-    @Column()
-    activa!: boolean;
+    @Column({ nullable: true })
+    activa!: boolean | null;
 
-    @Column()
-    creado_en!: Date;
+    @Column({ type: 'datetime', nullable: true })
+    creado_en!: Date | null;
 }   

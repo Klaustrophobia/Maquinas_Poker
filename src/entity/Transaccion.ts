@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, Decimal128, JoinColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Decimal128, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Maquina } from './Maquina';
 import { User } from './User';
+import { TipoTransaccion } from './TipoTransaccion';
 
 
 @Entity('transacciones')
@@ -12,34 +13,35 @@ export class Transaccion {
         @JoinColumn({ name: 'maquina_id' })
     maquina!: Maquina;
 
-    @Column()
-    tipo!: string;
+    @Column({ nullable: true})
+    tipo!: string | null;
 
-    @Column()
+    @Column({ nullable: false })
     monto!: Decimal128;
 
-    @Column()
-    moneda!: string;
+    @Column({ nullable: true })
+    moneda!: string | null;
 
-    @Column()
+    @Column({ type: 'datetime', nullable: false })
     fecha_transaccion!: Date;
 
-    @Column()
-    fecha_registro!: Date;
+    @Column({ type: 'datetime', nullable: true })
+    fecha_registro!: Date | null;
 
-    @Column()
-    descripcion!: string;
+    @Column({ nullable: true })
+    descripcion!: string | null;
 
-    @Column()
-    categoria_id!: number;
+    @OneToMany(() => TipoTransaccion, tipoTransaccion => tipoTransaccion.id)
+    @JoinColumn({ name: 'tipo_transaccion_id' })
+    tipoTransaccion!: TipoTransaccion[];
 
-    @Column()
-    metodo_pago!: string;
+    @Column({ nullable: true })
+    metodo_pago!: string | null;
 
     @ManyToOne(() => User)
         @JoinColumn({ name: 'usuario_id' })
     usuario!: User;
 
-    @Column()
-    sincronizado_quickbooks!: boolean;
+    @Column({ nullable: true })
+    sincronizado_quickbooks!: boolean | null;
 }

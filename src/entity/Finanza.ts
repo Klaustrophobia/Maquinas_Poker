@@ -3,25 +3,26 @@ import { Maquina } from './Maquina';
 import { User } from './User';
 import { Transaccion } from './Transaccion';
 import { Proveedor } from './Proveedor';
+import { OrdenTrabajo } from './OrdenesTrabajo';
 
 @Entity('finanzas')
 export class Finanza {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column({nullable: false})
   tipo_movimiento!: string;
 
-  @Column({ unique: true })
-  descripcion!: string;
+  @Column({ unique: true, nullable: true })
+  descripcion!: string | null;
 
-  @Column()
+  @Column({ nullable: false })
   monto!: Decimal128;
 
-  @Column()
+  @Column({ nullable: false })
   moneda!: string;
 
-  @Column()
+  @Column({ type: 'datetime', nullable: false })
   fecha_movimiento!: Date;
 
   @ManyToOne(() => Maquina)
@@ -40,18 +41,19 @@ export class Finanza {
       @JoinColumn({ name: 'proveedor_id' })
   proveedor_id!: Proveedor;
 
-  @Column()
-  orden_trabajo_id!: number;
+  @ManyToOne(() => OrdenTrabajo)
+      @JoinColumn({ name: 'orden_trabajo_id' })
+  orden_trabajo_id!: OrdenTrabajo;
 
-  @Column()
-  referencia_externa!: string;
+  @Column({ nullable: true })
+  referencia_externa!: string | null;
 
-  @Column()
-  notas!: string;
+  @Column({ nullable: true })
+  notas!: string | null;
 
-  @Column()
+  @Column({ type: 'datetime', nullable: false })
   creado_en!: Date;
 
-  @Column()
+  @Column({ type: 'datetime', nullable: false })
   actualizado_en!: Date;
 }

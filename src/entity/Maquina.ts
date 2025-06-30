@@ -7,19 +7,19 @@ export class Maquina {
     @PrimaryGeneratedColumn()
     id!: number;
     
-    @Column()
+    @Column({ nullable: false })
     numero_serie!: string;
-    
-    @Column()
+
+    @Column({ nullable: false })
     modelo!: string;
-    
-    @Column()
+
+    @Column({ type: 'datetime', nullable: false })
     fecha_adquisicion!: Date;
 
-    @Column()
-    fecha_instalacion!: Date;
-    
-    @Column()
+    @Column({ type: 'datetime', nullable: true })
+    fecha_instalacion!: Date | null;
+
+    @Column({ nullable: false })
     estado!: string;
 
     @ManyToOne(() => Ubicacion)
@@ -30,18 +30,18 @@ export class Maquina {
     @JoinColumn({ name: 'proveedor_id' })
     proveedor!: Proveedor;
 
-    @Column()
-    ultimo_mantenimiento!: Date;
+    @Column({ type: 'datetime', nullable: true })
+    ultimo_mantenimiento!: Date | null;
 
-    @Column()
-    proximo_mantenimiento!: Date;
+    @Column({ type: 'datetime', nullable: true })
+    proximo_mantenimiento!: Date | null;
 
-    @Column()
-    notas!: string;
+    @Column({ nullable: true })
+    notas!: string | null;
 
-    @Column()
-    creado_en!: Date;
-    
-    @Column()
-    actualizado_en!: Date;
+    @Column({ type: 'datetime', nullable: true })
+    creado_en!: Date | null;
+
+    @Column({ type: 'datetime', nullable: true })
+    actualizado_en!: Date | null;
 }
