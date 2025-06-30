@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Repuesto } from './Repuesto';
 
 @Entity('inventarios')
 export class Inventario {
@@ -6,32 +7,38 @@ export class Inventario {
   id!: number;
 
   @Column()
-  nombre!: string;
+  repuesto_id!: number;
+
+  @ManyToOne(() => Repuesto, (repuesto) => repuesto.inventario)
+  repuesto!: Repuesto;
+
+  @Column()
+  cantidad!: number;
 
   @Column({ unique: true })
-  email!: string;
+  ubicacion_almacen!: string;
 
   @Column()
-  password_hash!: string;
+  ultima_entrada_fecha!: Date;
 
   @Column()
-  rol!: string;
+  ultima_entrada_cantidad!: number;
 
   @Column()
-  telefono!: string;
-
-  @Column({ default: true })
-  activo!: boolean;
+  ultima_salida_fecha!: Date;
 
   @Column()
-  ultimo_login!: Date;
+  ultima_salida_cantidad!: number;
 
   @Column()
-  mfa_secret!: string;
+  stock_minimo!: number;
 
   @Column()
-  fecha_creacion!: Date;
+  notas!: string;
 
   @Column()
-  fecha_actualizacion!: Date;
+  creado_en!: Date;
+
+  @Column()
+  actualizado_en!: Date;
 }
