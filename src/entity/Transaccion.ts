@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, Decimal128, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Decimal128, JoinColumn, ManyToOne } from 'typeorm';
 import { Maquina } from './Maquina';
 import { User } from './User';
 import { TipoTransaccion } from './TipoTransaccion';
@@ -13,8 +13,8 @@ export class Transaccion {
         @JoinColumn({ name: 'maquina_id' })
     maquina!: Maquina;
 
-    @Column({ nullable: true})
-    tipo!: string | null;
+    // @Column({ nullable: true})
+    // tipo!: string | null;
 
     @Column({ nullable: false })
     monto!: Decimal128;
@@ -31,9 +31,12 @@ export class Transaccion {
     @Column({ nullable: true })
     descripcion!: string | null;
 
-    @OneToMany(() => TipoTransaccion, tipoTransaccion => tipoTransaccion.id)
-    @JoinColumn({ name: 'tipo_transaccion_id' })
-    tipoTransaccion!: TipoTransaccion[];
+    // @OneToMany(() => TipoTransaccion, tipoTransaccion => tipoTransaccion.id)
+    // @JoinColumn({ name: 'tipo_transaccion_id' })
+    // tipoTransaccion!: TipoTransaccion[];
+    @ManyToOne(() => TipoTransaccion)
+        @JoinColumn({ name: 'tipo_transaccion_id' })
+    tipoTransaccion!: TipoTransaccion;
 
     @Column({ nullable: true })
     metodo_pago!: string | null;
