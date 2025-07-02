@@ -17,7 +17,7 @@ export class Maquina {
     fecha_adquisicion!: Date;
 
     @Column({ type: 'datetime', nullable: true })
-    fecha_instalacion!: Date | null;
+    fecha_instalacion!: Date;
 
     @Column({ nullable: false })
     estado!: string;
@@ -31,17 +31,17 @@ export class Maquina {
     proveedor!: Proveedor;
 
     @Column({ type: 'datetime', nullable: true })
-    ultimo_mantenimiento!: Date | null;
+    ultimo_mantenimiento!: Date;
 
     @Column({ type: 'datetime', nullable: true })
-    proximo_mantenimiento!: Date | null;
+    proximo_mantenimiento!: Date;
 
     @Column({ nullable: true })
-    notas!: string | null;
+    notas!: string;
 
     @Column({ type: 'datetime', nullable: true })
-    creado_en!: Date | null;
+    creado_en!: Date;
 
     @Column({ type: 'datetime', nullable: true })
-    actualizado_en!: Date | null;
+    actualizado_en!: Date;
 }

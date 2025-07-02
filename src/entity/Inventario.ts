@@ -14,29 +14,29 @@ export class Inventario {
   cantidad!: number;
 
   @Column({ unique: true, nullable: true })
-  ubicacion_almacen!: string | null;
+  ubicacion_almacen!: string;
 
   @Column({ type: 'datetime', nullable: true })
-  ultima_entrada_fecha!: Date | null;
+  ultima_entrada_fecha!: Date;
 
   @Column({ nullable: true })
-  ultima_entrada_cantidad!: number | null;
+  ultima_entrada_cantidad!: number;
 
   @Column({ type: 'datetime', nullable: true })
-  ultima_salida_fecha!: Date | null;
+  ultima_salida_fecha!: Date;
 
   @Column({ nullable: true })
-  ultima_salida_cantidad!: number | null;
+  ultima_salida_cantidad!: number;
 
   @Column({ nullable: true })
-  stock!: number | null;
+  stock!: number;
 
   @Column({ nullable: true })
-  notas!: string | null;
+  notas!: string;
 
   @Column({ type: 'datetime', nullable: false })
-  creado_en!: Date | null;
+  creado_en!: Date;
 
   @Column({ type: 'datetime', nullable: false })
-  actualizado_en!: Date | null;
+  actualizado_en!: Date;
 }

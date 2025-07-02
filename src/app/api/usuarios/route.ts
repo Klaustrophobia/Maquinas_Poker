@@ -2,7 +2,6 @@
 import { authenticateRole } from '@/middleware/auth';
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 // importamos la conexion de TypeORM y la entidad
 import { getDataSource } from '@/data-source';
 import { User } from '@/entity/User';
@@ -80,21 +79,10 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 });
     }
 
-    // Comparar la contraseña proporcionada con la contraseña hasheada en la BD
-    const valid = await bcrypt.compare(password_hash, user.password_hash as string);
-    if (!valid) {
-      return NextResponse.json({ error: 'Contraseña incorrecta' }, { status: 401 });
-    }
-
-    // Generar un token JWT para el usuario autenticado
-    const token = jwt.sign(
-      { id: user.id, nombre: user.nombre, rol: user.rol },
-      process.env.JWT_SECRET as string,
-      { expiresIn: '8h' } 
-    );
+    
 
     // Respuesta exitosa con el token
-    return NextResponse.json({ token });
+    return NextResponse.json({ user });
   } catch (error) {
     if (error instanceof Error) {
       console.error('Error en login (GET):', error.message);

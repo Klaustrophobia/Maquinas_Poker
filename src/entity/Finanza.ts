@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, Decimal128, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Maquina } from './Maquina';
 import { User } from './User';
 import { Transaccion } from './Transaccion';
@@ -14,10 +14,10 @@ export class Finanza {
   tipo_movimiento!: string;
 
   @Column({ unique: true, nullable: true })
-  descripcion!: string | null;
+  descripcion!: string;
 
-  @Column({ nullable: false })
-  monto!: Decimal128;
+  @Column({ type: 'decimal', precision: 18, scale: 2, nullable: false })
+  monto!: number;
 
   @Column({ nullable: false })
   moneda!: string;
@@ -46,10 +46,10 @@ export class Finanza {
   orden_trabajo_id!: OrdenTrabajo;
 
   @Column({ nullable: true })
-  referencia_externa!: string | null;
+  referencia_externa!: string;
 
   @Column({ nullable: true })
-  notas!: string | null;
+  notas!: string;
 
   @Column({ type: 'datetime', nullable: false })
   creado_en!: Date;

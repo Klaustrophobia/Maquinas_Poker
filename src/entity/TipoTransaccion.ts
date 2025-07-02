@@ -13,11 +13,11 @@ export class TipoTransaccion {
 
     // Definimos la relación recursiva para el padre
     @Column({ name: 'padre_id', nullable: true })
-    padre_id!: number | null;
+    padre_id!: number;
 
     @ManyToOne(() => TipoTransaccion, tipoTransaccion => tipoTransaccion.hijos)
     @JoinColumn({ name: 'padre_id' })
-    padre!: TipoTransaccion | null; // La propiedad que contendrá el objeto padre (o null si es raíz)
+    padre!: TipoTransaccion; // La propiedad que contendrá el objeto padre (o null si es raíz)
 
     // --- Relación recursiva con los hijos ---
     // Un tipo de transacción puede tener MUCHOS hijos
@@ -25,5 +25,5 @@ export class TipoTransaccion {
     hijos!: TipoTransaccion[]; // La propiedad que contendrá un array de objetos hijos
 
     @Column({ default: true, nullable: true })
-    activa!: boolean | null;
+    activa!: boolean;
 }

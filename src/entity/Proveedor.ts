@@ -9,26 +9,26 @@ export class Proveedor {
     nombre!: string;
 
     @Column({ nullable: true })
-    contacto!: string | null;
+    contacto!: string;
 
     @Column({ nullable: true })
-    telefono!: string | null;
+    telefono!: string;
 
     @Column({ nullable: true })
-    email!: string | null;
+    email!: string;
 
     @Column({ nullable: true })
-    direccion!: string | null;
+    direccion!: string;
 
     @Column({ nullable: true })
-    rtn!: string | null;
+    rtn!: string;
 
     @Column({ nullable: true })
-    tipo_servicio!: string | null;
+    tipo_servicio!: string;
 
     @Column({ nullable: true })
-    calificacion!: number | null;
+    calificacion!: number;
 
     @Column({ nullable: true })
-    activo!: boolean | null;
+    activo!: boolean;
 }   

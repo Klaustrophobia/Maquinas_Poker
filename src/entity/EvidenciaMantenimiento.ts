@@ -11,5 +11,5 @@ export class EvidenciaMantenimiento {
     mantenimiento!: Mantenimiento;
 
     @Column({ nullable: true })
-    url_foto!: string | null;
+    url_foto!: string;
 }

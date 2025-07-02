@@ -15,13 +15,13 @@ export class OrdenTrabajo {
     maquina!: Maquina;
 
     @Column({ nullable: true })
-    tipo!: string | null;
+    tipo!: string;
 
     @Column({ nullable: true })
-    prioridad!: string | null;
+    prioridad!: string;
 
     @Column({ nullable: true })
-    estado!: string | null;
+    estado!: string;
 
     @Column({ nullable: false })
     descripcion!: string;
@@ -31,35 +31,35 @@ export class OrdenTrabajo {
     tecnico!: Tecnico;
 
     @Column({ type: 'datetime', nullable: true })
-    fecha_creacion!: Date | null;
+    fecha_creacion!: Date;
 
     @Column({ type: 'datetime', nullable: true })
-    fecha_asignacion!: Date | null;
+    fecha_asignacion!: Date;
 
     @Column({ type: 'datetime', nullable: true })
-    fecha_inicio!: Date | null;
+    fecha_inicio!: Date;
 
     @Column({ type: 'datetime', nullable: true })
-    fecha_finalizacion!: Date | null;
+    fecha_finalizacion!: Date;
 
     @Column({ nullable: true })
-    tiempo_estimado!: number | null;
+    tiempo_estimado!: number;
 
     @Column({ nullable: true })
-    tiempo_real!: number | null;
+    tiempo_real!: number;
 
     @Column({ nullable: true })
-    cliente_notificado!: boolean | null;
+    cliente_notificado!: boolean;
 
     @Column({ nullable: true })
-    firma_cliente!: string | null;
+    firma_cliente!: string;
 
     @Column({ nullable: true })
-    foto_finalizacion!: string | null;
+    foto_finalizacion!: string;
 
     @Column({ nullable: true })
-    calificacion_servicio!: number | null;
+    calificacion_servicio!: number;
 
     @Column({ nullable: true })
-    comentarios_cliente!: string | null;
+    comentarios_cliente!: string;
 }

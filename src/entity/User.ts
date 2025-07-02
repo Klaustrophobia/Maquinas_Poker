@@ -15,22 +15,22 @@ export class User {
   password_hash!: string;
 
   @Column({ nullable: true })
-  rol!: string | null;
+  rol!: string;
 
   @Column({ nullable: true })
-  telefono!: string | null;
+  telefono!: string;
 
   @Column({ default: true, nullable: true })
-  activo!: boolean | null;
+  activo!: boolean;
 
   @Column({ type: 'datetime', nullable: true })
-  ultimo_login!: Date | null;
+  ultimo_login!: Date;
 
   @Column({ nullable: true })
-  mfa_secret!: string | null;
+  mfa_secret!: string;
 
   @Column({ type: 'datetime', nullable: true })
-  fecha_creacion!: Date | null;
+  fecha_creacion!: Date;
 
   @Column({ type: 'datetime', nullable: false })
   fecha_actualizacion!: Date;

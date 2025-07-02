@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Decimal128 } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { User } from './User';
 
 @Entity('tecnicos')
@@ -11,32 +11,32 @@ export class Tecnico {
     usuario!: User;
 
     @Column({ nullable: true })
-    especialidad!: string | null;
+    especialidad!: string;
 
     @Column({ nullable: true })
-    disponibilidad!: string | null;
+    disponibilidad!: string;
 
     @Column({ nullable: true })
-    vehiculo_asignado!: string | null;
+    vehiculo_asignado!: string;
 
     @Column({ nullable: true })
-    herramienta_asignada!: string | null;
+    herramienta_asignada!: string;
+
+    @Column({ type: 'decimal', precision: 3, scale: 2, nullable: true })
+    calificacion_promedio!: number;
 
     @Column({ nullable: true })
-    calificacion_promedio!: Decimal128 | null;
+    fecha_contratacion!: Date;
 
     @Column({ nullable: true })
-    fecha_contratacion!: Date | null;
+    ubicacion_actual!: string;
 
-    @Column({ nullable: true })
-    ubicacion_actual!: string | null;
+    @Column({ type: 'decimal', precision: 10, scale: 8, nullable: true })
+    ultima_ubicacion_lat!: number;
 
-    @Column({ nullable: true })
-    ultima_ubicacion_lat!: Decimal128 | null;
-
-    @Column({ nullable: true })
-    ultima_ubicacion_lon!: Decimal128 | null;
+    @Column({ type: 'decimal', precision: 11, scale: 8, nullable: true })
+    ultima_ubicacion_lon!: number;
 
     @Column({ type: 'datetime', nullable: true })
-    ultima_actualizacion_ubicacion!: Date | null;
+    ultima_actualizacion_ubicacion!: Date;
 }

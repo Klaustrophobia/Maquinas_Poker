@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, Decimal128, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { OrdenTrabajo } from './OrdenesTrabajo';
 import { Tecnico } from './Tecnico';
 
@@ -18,30 +18,30 @@ export class Mantenimiento {
   descripcion!: string;
 
   @Column({nullable: true})
-  acciones_realizadas!: string | null;
+  acciones_realizadas!: string;
 
   @Column({nullable: true})
-  repuestos_utilizados!: string | null;
+  repuestos_utilizados!: string;
 
-  @Column({nullable: true})
-  costo_estimado!: Decimal128 | null;
+  @Column({type: 'decimal', precision: 10, scale: 2, nullable: true})
+  costo_estimado!: number;
 
-  @Column({nullable: true})
-  costo_real!: Decimal128 | null;
+  @Column({type: 'decimal', precision: 10, scale: 2, nullable: true})
+  costo_real!: number;
 
   @Column({type: 'datetime', nullable: true})
-  fecha_programada!: Date | null;
+  fecha_programada!: Date;
 
   @Column({type: 'datetime', nullable: true})
-  fecha_realizacion!: Date | null;
+  fecha_realizacion!: Date;
 
   @ManyToOne(() => Tecnico)
   @JoinColumn({ name: 'tecnico_id' })
   tecnico!: Tecnico;
 
   @Column({nullable: true})
-  resultado!: string | null;
+  resultado!: string;
 
   @Column({nullable: true})
-  observaciones!: string | null;
+  observaciones!: string;
 }

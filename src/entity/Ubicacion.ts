@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, Decimal128 } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('ubicaciones')
 export class Ubicacion {
@@ -15,23 +15,23 @@ export class Ubicacion {
     ciudad!: string;
 
     @Column({ nullable: true})
-    codigo_postal!: string | null;
+    codigo_postal!: string;
 
     @Column({ nullable: true })
-    telefono!: string | null;
+    telefono!: string;
 
     @Column({ nullable: true })
-    responsable!: string | null;
+    responsable!: string;
+
+    @Column({ type: 'decimal', precision: 10, scale: 8, nullable: true })
+    latitud!: number;
+
+    @Column({ type: 'decimal', precision: 11, scale: 8, nullable: true })
+    longitud!: number;
 
     @Column({ nullable: true })
-    latitud!: Decimal128 | null;
-
-    @Column({ nullable: true })
-    longitud!: Decimal128 | null;
-
-    @Column({ nullable: true })
-    activa!: boolean | null;
+    activa!: boolean;
 
     @Column({ type: 'datetime', nullable: true })
-    creado_en!: Date | null;
+    creado_en!: Date;
 }   

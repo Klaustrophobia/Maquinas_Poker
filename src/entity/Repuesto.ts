@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, Decimal128, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Proveedor } from './Proveedor';
 
 @Entity('repuestos')
@@ -10,7 +10,7 @@ export class Repuesto {
     nombre!: string;
 
     @Column({ nullable: true })
-    codigo!: string | null;
+    codigo!: string;
 
     @Column({ nullable: false })
     descripcion!: string;
@@ -19,15 +19,15 @@ export class Repuesto {
     @JoinColumn({ name: 'proveedor_id' })
     proveedor!: Proveedor;
 
-    @Column({ nullable: true })
-    precio_unitario!: Decimal128 | null;
+    @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+    precio_unitario!: number;
 
     @Column({ nullable: true })
-    ubicacion_almacen!: string | null;
+    ubicacion_almacen!: string;
 
     @Column({ nullable: true })
-    compatible_con!: string | null;
+    compatible_con!: string;
 
     @Column({ type: 'datetime', nullable: true })
-    fecha_ultimo_reabastecimiento!: Date | null;
+    fecha_ultimo_reabastecimiento!: Date;
 }
