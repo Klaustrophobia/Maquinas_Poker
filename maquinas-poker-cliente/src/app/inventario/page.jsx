@@ -1,82 +1,218 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
 
 export default function Inventario() {
-  const [maquinas, setMaquinas] = useState([]);
-  const [nombre, setNombre] = useState("");
-  const [estado, setEstado] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const router = useRouter();
 
-  useEffect(() => {
+  // Campos del modal
+  const [repuestoId, setRepuestoId] = useState('');
+  const [cantidad, setCantidad] = useState('');
+  const [ubicacionAlmacen, setUbicacionAlmacen] = useState('');
+  const [ultimaEntradaFecha, setUltimaEntradaFecha] = useState('');
+  const [ultimaEntradaCantidad, setUltimaEntradaCantidad] = useState('');
+  const [ultimaSalidaFecha, setUltimaSalidaFecha] = useState('');
+  const [ultimaSalidaCantidad, setUltimaSalidaCantidad] = useState('');
+  const [stockMinimo, setStockMinimo] = useState('');
+  const [notas, setNotas] = useState('');
 
-
-    // Vista del inventario mostrando tarjetas
-
-    const datosEjemplo = [
-      { id: 1, nombre: "Máquina 1", estado: "Operativa" },
-      { id: 2, nombre: "Máquina 2", estado: "En reparación" },
-      { id: 3, nombre: "Máquina 3", estado: "Fuera de servicio" },
-    ];
-
-    setTimeout(() => {
-      setMaquinas(datosEjemplo);
-      setLoading(false);
-    }, 500); // Simula carga
-  }, []);
-
-  // Función  para agregar máquina 
-  const agregarMaquina = () => {
-    if (!nombre || !estado) return alert("Completa todos los campos");
-
-    const nuevaMaquina = {
-      id: Date.now(),
-      nombre,
-      estado,
-    };
-
-    setMaquinas((prev) => [nuevaMaquina, ...prev]);
-    setNombre("");
-    setEstado("");
-  };
-
-  if (loading) return <p className="p-8 text-white">Cargando...</p>;
+  function handleSubmit(e) {
+    e.preventDefault();
+    console.log({
+      repuestoId,
+      cantidad,
+      ubicacionAlmacen,
+      ultimaEntradaFecha,
+      ultimaEntradaCantidad,
+      ultimaSalidaFecha,
+      ultimaSalidaCantidad,
+      stockMinimo,
+      notas,
+    });
+    alert('✅ Máquina registrada (revisa consola)');
+    setShowModal(false);
+  }
 
   return (
-    <div className="min-h-screen bg-black text-white p-8 font-[family-name:var(--font-geist-sans)]">
-      <h1 className="text-3xl font-bold mb-8">Inventario de Máquinas de Póker</h1>
-
-      <div className="mb-8 space-y-4 max-w-md">
-        <input
-          type="text"
-          placeholder="Nombre de la máquina"
-          value={nombre}
-          onChange={e => setNombre(e.target.value)}
-          className="w-full p-2 rounded bg-gray-800 text-white"
-        />
-        <input
-          type="text"
-          placeholder="Estado"
-          value={estado}
-          onChange={e => setEstado(e.target.value)}
-          className="w-full p-2 rounded bg-gray-800 text-white"
-        />
+    <div style={{
+      height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 40
+    }}>
+      <div style={{ display: 'flex', gap: 80, justifyContent: 'center' }}>
         <button
-          onClick={agregarMaquina}
-          className="w-full bg-blue-600 py-2 rounded hover:bg-blue-700 transition text-white"
+          style={btnStyle}
+          onClick={() => router.push('/inventario/verInventario')}
         >
-          Registrar Nueva Máquina
+          <img src="/inventario.jpg" alt="Inventario" style={imgStyle} />
+          Ver Inventario
         </button>
+
+        <button
+          style={btnStyle}
+          onClick={() => setShowModal(true)}
+        >
+          <img src="/maquinascrear.jpg" alt="Crear Máquina" style={imgStyle} />
+          Crear Máquina
+        </button>
+
+        <button
+          style={btnStyle}
+          onClick={() => router.push('/inventario/verRepuestos')}
+        >
+          <img src="/repuesto.jpg" alt="Repuestos" style={imgStyle} />
+          Ver Repuestos
+        </button>
+
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {maquinas.map((maquina) => (
-          <div key={maquina.id} className="bg-gray-900 p-6 rounded-lg shadow-lg">
-            <h2 className="text-xl font-semibold mb-2">{maquina.nombre}</h2>
-            <p><strong>Estado:</strong> {maquina.estado}</p>
+      {/* Modal */}
+        {/* Modal */}
+        {showModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0,
+          width: '100vw', height: '100vh',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: '#ffffff',
+            padding: '30px',
+            borderRadius: '16px',
+            width: '450px',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
+            color: '#111827'
+          }}>
+            <h2 style={{ marginBottom: 20, color: '#111827', fontSize: '22px' }}>
+              Crear Máquina - Inventario
+            </h2>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            
+              <label style={labelStyle}>Cantidad</label>
+              <input type="number" value={cantidad} onChange={e => setCantidad(e.target.value)} required style={inputStyle} />
+
+              <label style={labelStyle}>Ubicación Almacén</label>
+              <input type="text" value={ubicacionAlmacen} onChange={e => setUbicacionAlmacen(e.target.value)} style={inputStyle} />
+
+              <label style={labelStyle}>Última Entrada Fecha</label>
+              <input type="date" value={ultimaEntradaFecha} onChange={e => setUltimaEntradaFecha(e.target.value)} style={inputStyle} />
+
+              <label style={labelStyle}>Última Entrada Cantidad</label>
+              <input type="number" value={ultimaEntradaCantidad} onChange={e => setUltimaEntradaCantidad(e.target.value)} style={inputStyle} />
+
+              <label style={labelStyle}>Última Salida Fecha</label>
+              <input type="date" value={ultimaSalidaFecha} onChange={e => setUltimaSalidaFecha(e.target.value)} style={inputStyle} />
+
+              <label style={labelStyle}>Última Salida Cantidad</label>
+              <input type="number" value={ultimaSalidaCantidad} onChange={e => setUltimaSalidaCantidad(e.target.value)} style={inputStyle} />
+
+              <label style={labelStyle}>Stock Mínimo</label>
+              <input type="number" value={stockMinimo} onChange={e => setStockMinimo(e.target.value)} style={inputStyle} />
+
+              <label style={labelStyle}>Notas</label>
+              <textarea value={notas} onChange={e => setNotas(e.target.value)} rows={3} style={{ ...inputStyle, resize: 'vertical' }} />
+
+              <div style={{ marginTop: 20, display: 'flex', justifyContent: 'space-between' }}>
+                <button type="submit" style={greenBtn}>Guardar</button>
+                <button type="button" onClick={() => setShowModal(false)} style={blueBtn}>Cerrar</button>
+              </div>
+            </form>
           </div>
-        ))}
-      </div>
+        </div>
+        )}
+
+
+
+
+
     </div>
   );
 }
+
+// Estilos
+const imgStyle = {
+  width: 200,
+  height: 200,
+  marginBottom: 20,
+  borderRadius: 20
+};
+
+const overlayStyle = {
+  position: 'fixed',
+  top: 0, left: 0,
+  width: '100vw',
+  height: '100vh',
+  backgroundColor: 'rgba(0,0,0,0.5)',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  zIndex: 1000
+};
+
+const modalStyle = {
+  background: 'linear-gradient(to right, #f8fafc, #e0f2fe)',
+  padding: 30,
+  borderRadius: 15,
+  width: '420px',
+  maxHeight: '90vh',
+  overflowY: 'auto',
+  boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
+};
+
+const redBtn = {
+  backgroundColor: '#ef4444',
+  color: 'white',
+  padding: '10px 20px',
+  border: 'none',
+  borderRadius: 8
+};
+
+const labelStyle = {
+  fontWeight: '500',
+  fontSize: '14px',
+  color: '#111827', // letras negras
+};
+
+const greenBtn = {
+  backgroundColor: '#16a34a',
+  color: 'white',
+  padding: '10px 20px',
+  border: 'none',
+  borderRadius: '8px',
+  fontWeight: '500'
+};
+
+const inputStyle = {
+  padding: '12px 16px', // más grande
+  borderRadius: '8px',
+  border: '1px solid #d1d5db',
+  fontSize: '16px',     // más grande
+};
+
+const blueBtn = {
+  backgroundColor: '#1c3faa', // un azul más oscuro
+  color: 'white',
+  padding: '10px 20px',
+  border: 'none',
+  borderRadius: '8px',
+  fontWeight: '500'
+};
+
+const btnStyle = {
+  textAlign: 'center',
+  cursor: 'pointer',
+  backgroundColor: '#1c3faa', // también aquí
+  color: 'white',
+  border: 'none',
+  borderRadius: 10,
+  padding: '20px 30px',
+  fontSize: 18,
+  boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
+};
