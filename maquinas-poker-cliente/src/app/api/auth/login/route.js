@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { findUserByCredentials } from '@/lib/users';
-import { generateToken } from '@/lib/jwt';
+//import { findUserByCredentials } from '@/lib/users';
+import { findUserByCredentials } from '../../../../lib/users';
+import { generateToken } from '../../../../lib/jwt';
 
 export async function POST(request) {
   const { email, password } = await request.json();

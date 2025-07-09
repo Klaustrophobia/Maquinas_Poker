@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { findUserById } from '@/lib/users';
+//import { findUserById } from '@/lib/users';
+import { findUserById } from '../../../../lib/users';
 
 export async function GET(request) {
   const token = request.cookies.get('authToken')?.value;
