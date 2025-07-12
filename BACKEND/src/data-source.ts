@@ -17,16 +17,16 @@ import { EvidenciaMantenimiento } from './entity/EvidenciaMantenimiento';
 
 export const AppDataSource = new DataSource({
   type: 'mssql',
-  host: process.env.DB_SERVER || 'DESKTOP-PU1H6AA',
-  port: 1433,
+  host: process.env.DB_SERVER || 'localhost',
+  port: 8605,
   username: process.env.DB_USERNAME || 'sa',
-  password: process.env.DB_PASSWORD || 'KevinS19.',
+  password: process.env.DB_PASSWORD || 'Passjosue258456/*',
   database: process.env.DB_DATABASE || 'gestion_maquinas_poker',
   // Directorio donde TypeORM mapeará las entidades
   entities: [User, Ubicacion, Transaccion, TipoTransaccion, Tecnico, Repuesto, Proveedor, OrdenTrabajo,
     Maquina, Mantenimiento, Inventario, Finanza, EvidenciaMantenimiento
   ],
-  synchronize: process.env.NODE_ENV !== 'production', // Sincronizar entidades solo en desarrollo
+  synchronize: false, // Sincronizar entidades solo en desarrollo
   logging: process.env.NODE_ENV === 'development' ? ['query', 'error'] : ['error'], // Habilitar logging solo en desarrollo
   options: {
     encrypt: false,
