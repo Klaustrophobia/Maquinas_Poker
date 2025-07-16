@@ -1,12 +1,16 @@
 import { NextResponse } from 'next/server';
-//import { findUserByCredentials } from '@/lib/users';
-import { findUserByCredentials } from '../../../../lib/users';
 import { generateToken } from '../../../../lib/jwt';
 
 export async function POST(request) {
   const { email, password } = await request.json();
 
-  const user = findUserByCredentials(email, password);
+  const res = await fetch('http://localhost:3000/api/usuarios/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+  const { user } = await res.json();
   
   if (!user) {
     return NextResponse.json(
@@ -15,14 +19,16 @@ export async function POST(request) {
     );
   }
 
-  const token = generateToken(user.id, user.role);
+  const token = generateToken(user.id, user.rol);
   
   // Creamos la respuesta y seteamos la cookie HTTP-only
   const response = NextResponse.json({
     id: user.id,
-    name: user.name,
-    email: user.email,
-    role: user.role
+    name: user.nombre,
+    email: user.correo,
+    rol: user.rol,
+    telefono: user.telefono,
+    activo: user.activo
   });
 
   response.cookies.set({

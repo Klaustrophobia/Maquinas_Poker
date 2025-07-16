@@ -26,7 +26,7 @@ export const AppDataSource = new DataSource({
   entities: [User, Ubicacion, Transaccion, TipoTransaccion, Tecnico, Repuesto, Proveedor, OrdenTrabajo,
     Maquina, Mantenimiento, Inventario, Finanza, EvidenciaMantenimiento
   ],
-  synchronize: process.env.NODE_ENV !== 'production', // Sincronizar entidades solo en desarrollo
+  synchronize: false, // Sincronizar entidades solo en desarrollo
   logging: process.env.NODE_ENV === 'development' ? ['query', 'error'] : ['error'], // Habilitar logging solo en desarrollo
   options: {
     encrypt: false,

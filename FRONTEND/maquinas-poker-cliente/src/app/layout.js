@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/app/context/AuthContext"; 
+import { AuthProvider } from "../app/context/AuthContext"; 
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,7 +24,6 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           {children}
         </AuthProvider>
-
 
       </body>
     </html>

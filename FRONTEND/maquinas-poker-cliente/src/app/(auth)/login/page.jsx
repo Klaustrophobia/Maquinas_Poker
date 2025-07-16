@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/app/context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -25,16 +25,16 @@ export default function LoginPage() {
       if (response.ok) {
         const user = await response.json();
         login(user);
-
-        switch (user.role) {
+        console.log('user', user);
+        switch (user.rol) {
           case 'admin':
             router.push('/admin');
             break;
-          case 'client':
-            router.push('/client');
+          case 'cliente':
+            router.push('/cliente');
             break;
-          case 'technician':
-            router.push('/technician');
+          case 'tecnico':
+            router.push('/tecnico');
             break;
           default:
             router.push('/');
@@ -106,3 +106,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+
