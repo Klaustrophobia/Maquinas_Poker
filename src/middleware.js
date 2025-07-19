@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 
 const PROTECTED_PATHS = {
   admin: ['/admin', '/configuracion'],
-  tecnico: ['/tecnico', '/mantenimiento'],
-  cliente: ['/cliente', '/DashboardCliente']
+  tecnico: ['/tecnico'],
+  cliente: ['/cliente']
 };
 
 export default withAuth(
@@ -63,7 +63,6 @@ export const config = {
     '/tecnico/:path*',
     '/cliente/:path*',
     '/DashboardCliente',
-    '/configuracion/:path*',
-    '/mantenimiento/:path*'
+    '/DashboardTecnico'
   ]
 };
