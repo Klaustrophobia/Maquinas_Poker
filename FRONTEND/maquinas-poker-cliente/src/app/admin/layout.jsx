@@ -8,7 +8,7 @@ export default function AdminLayout({ children }) {
 
   useEffect(() => {
     console.log("Usuario actual:", user);
-    if (!loading && (!user || user.role !== 'admin')) {
+    if (!loading && (!user || user.rol !== 'admin')) {
       router.push('/login');
     }
   }, [user, loading, router]);
@@ -21,7 +21,7 @@ export default function AdminLayout({ children }) {
     );
   }
 
-  if (!user || user.role !== 'admin') {
+  if (!user || user.rol !== 'admin') {
     return null; // O un mensaje de redirección
   }
 

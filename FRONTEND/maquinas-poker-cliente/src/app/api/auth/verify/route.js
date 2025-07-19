@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 //import { findUserById } from '@/lib/users';
-import { findUserById } from '../../../../lib/users';
+import { verifyToken } from '../../../../lib/jwt';
 
 export async function GET(request) {
   const token = request.cookies.get('authToken')?.value;
@@ -12,7 +12,7 @@ export async function GET(request) {
     );
   }
 
-  const user = findUserById(token.userId);
+  const user = verifyToken(token);
   
   if (!user) {
     return NextResponse.json(
@@ -21,10 +21,5 @@ export async function GET(request) {
     );
   }
 
-  return NextResponse.json({
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    role: user.role
-  });
+  return NextResponse.json(user);
 }

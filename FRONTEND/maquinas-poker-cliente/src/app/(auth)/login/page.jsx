@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/app/context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -25,16 +25,16 @@ export default function LoginPage() {
       if (response.ok) {
         const user = await response.json();
         login(user);
-
-        switch (user.role) {
+        console.log('user', user);
+        switch (user.rol) {
           case 'admin':
             router.push('/admin');
             break;
-          case 'client':
-            router.push('/client');
+          case 'cliente':
+            router.push('/cliente');
             break;
-          case 'technician':
-            router.push('/technician');
+          case 'tecnico':
+            router.push('/tecnico');
             break;
           default:
             router.push('/');
@@ -49,60 +49,68 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black text-white">
-      <div className="bg-gray-900 p-8 rounded-lg shadow-md w-full max-w-md relative">
-        {/* Botón Volver al inicio */}
-        <Link
-          href="/"
-          className="absolute top-4 left-4 text-blue-400 hover:text-blue-600 font-semibold"          >
-          ← Volver al inicio
-        </Link>
+  <div className="min-h-screen flex items-center justify-center bg-gray-100 text-gray-800">
+    <div className="bg-gray-50 p-8 pt-16 rounded-lg shadow-lg w-full max-w-md relative border border-gray-200">
+      {/* Botón para volver al inicio */}
+      <Link
+        href="/"
+        className="absolute top-4 left-4 text-blue-600 hover:text-blue-700 font-semibold"
+      >
+        ← Volver al inicio
+      </Link>
 
-        <h1 className="text-2xl font-bold mb-6 text-center">Inicio de Sesión</h1>
+      {/* Título principal */}
+      <h1 className="text-3xl font-bold mb-8 text-center text-gray-900">
+        Inicio de Sesión
+      </h1>
 
-        {error && (
-          <div className="mb-4 p-2 bg-red-500 text-white rounded">
-            {error}
-          </div>
-        )}
+      {/* Mensaje de error si las credenciales son inválidas */}
+      {error && (
+        <div className="mb-6 p-3 bg-red-100 text-red-700 rounded-md border border-red-200">
+          {error}
+        </div>
+      )}
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block mb-2" htmlFor="email">
-              Correo Electrónico
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg text-black"
-              required
-            />
-          </div>
+      <form onSubmit={handleSubmit}>
+        {/* Campo para el correo electrónico */}
+        <div className="mb-5">
+          <label className="block mb-2 text-gray-700" htmlFor="email">
+            Correo Electrónico
+          </label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent transition duration-200"
+            required
+          />
+        </div>
 
-          <div className="mb-6">
-            <label className="block mb-2" htmlFor="password">
-              Contraseña
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg text-black"
-              required
-            />
-          </div>
+        {/* Campo para la contraseña */}
+        <div className="mb-6">
+          <label className="block mb-2 text-gray-700" htmlFor="password">
+            Contraseña
+          </label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent transition duration-200"
+            required
+          />
+        </div>
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-          >
-            Iniciar Sesión
-          </button>
-        </form>
-      </div>
+        {/* Botón para enviar el formulario */}
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md"
+        >
+          Iniciar Sesión
+        </button>
+      </form>
     </div>
-  );
+  </div>
+);
 }
