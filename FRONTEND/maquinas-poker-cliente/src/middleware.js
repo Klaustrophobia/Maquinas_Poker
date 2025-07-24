@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { verifyToken } from './lib/jwt';
+import { ClientRequest } from 'http';
 
 const protectedRoutes = {
   admin: ['/admin'],

@@ -4,8 +4,8 @@ const JWT_SECRET = process.env.JWT_SECRET || "tu_secreto_super_seguro";
 const JWT_EXPIRES_IN = "2h";
 
 // Crear token JWT
-export const generateToken = (userId, role) => {
-  return jwt.sign({ userId, role }, JWT_SECRET, {
+export const generateToken = (userId, rol) => {
+  return jwt.sign({ userId, rol }, JWT_SECRET, {
     expiresIn: JWT_EXPIRES_IN
   });
 };
