@@ -7,7 +7,7 @@ export async function POST(request) {
   const { email, password } = await request.json();
 
   const user = findUserByCredentials(email, password);
-  
+  console.log(email, password);
   if (!user) {
     return NextResponse.json(
       { error: "Credenciales inválidas" },
