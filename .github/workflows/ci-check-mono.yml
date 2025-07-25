@@ -36,14 +36,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Install frontend dependencies
-      run: |
-        if [ -f package-lock.json ]; then
-          npm ci
-        else
-          npm install
-        fi
-
     - name: Verify TypeScript compilation
       run: npx tsc --noEmit
 
