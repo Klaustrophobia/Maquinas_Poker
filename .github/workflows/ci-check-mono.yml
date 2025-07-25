@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./maquinas_gestion_poker/BACKEND
+        working-directory: BACKEND
 
     steps:
     - name: Checkout repository
@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./maquinas_gestion_poker/FRONTEND
+        working-directory: FRONTEND
 
     steps:
     - name: Checkout repository
