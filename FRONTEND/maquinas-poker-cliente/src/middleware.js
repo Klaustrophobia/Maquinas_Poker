@@ -1,49 +1,68 @@
-import { NextResponse } from 'next/server';
-import { verifyToken } from './lib/jwt';
-import { ClientRequest } from 'http';
+import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
 
-const protectedRoutes = {
-  admin: ['/admin'],
-  client: ['/client'],
-  technician: ['/technician']
+const PROTECTED_PATHS = {
+  admin: ['/admin', '/configuracion'],
+  tecnico: ['/tecnico'],
+  cliente: ['/cliente']
 };
 
-export async function middleware(request) {
-  const token = request.cookies.get('authToken')?.value;
-  const { pathname } = request.nextUrl;
+export default withAuth(
+  async function middleware(request) {
+    const { pathname } = request.nextUrl;
+    const token = request.nextauth?.token;
 
-  // Verificar si la ruta requiere autenticación
-  const requiresAuth = Object.values(protectedRoutes).some(
-    routes => routes.some(route => pathname.startsWith(route))
-  );
+    // Verificación más estricta de autenticación
+    if (!token) {
+      console.log('Middleware: No hay token, redirigiendo a login');
+      return NextResponse.redirect(new URL(`/auth/login?error=No autenticado&from=${encodeURIComponent(pathname)}`, request.url));
+    }
 
-  if (!requiresAuth) {
+    // Verificación de rutas protegidas
+    for (const [role, routes] of Object.entries(PROTECTED_PATHS)) {
+      if (routes.some(route => pathname.startsWith(route))) {
+        if (role === 'admin' && token.role !== 'admin') {
+          console.log(`Middleware: Intento de acceso a ${pathname} sin rol admin`);
+          return NextResponse.redirect(new URL('/auth/login?error=Requiere rol admin', request.url));
+        }
+        if (role === 'tecnico' && !['tecnico', 'admin'].includes(token.role)) {
+          console.log(`Middleware: Intento de acceso a ${pathname} sin rol tecnico`);
+          return NextResponse.redirect(new URL('/auth/login?error=Requiere rol tecnico', request.url));
+        }
+        if (role === 'cliente' && !['cliente', 'admin'].includes(token.role)) {
+          console.log(`Middleware: Intento de acceso a ${pathname} sin rol cliente`);
+          return NextResponse.redirect(new URL('/auth/login?error=Requiere rol cliente', request.url));
+        }
+      }
+    }
+
     return NextResponse.next();
+  },
+  {
+    callbacks: {
+      authorized: ({ token }) => {
+        // Verificación más estricta
+        if (!token) {
+          console.log('Callback authorized: No hay token');
+          return false;
+        }
+        return true;
+      },
+    },
+    pages: {
+      signIn: '/auth/login',
+      error: '/auth/login?error=',
+      signOut: '/auth/login'
+    }
   }
+);
 
-  // Si no hay token, redirigir a login
-  if (!token) {
-    const loginUrl = new URL('/login', request.url);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  // Verificar token
-  const decoded = verifyToken(token);
-  if (!decoded) {
-    const loginUrl = new URL('/login', request.url);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  // Verificar permisos de ruta
-  const userRole = decoded.role;
-  const hasPermission = protectedRoutes[userRole]?.some(
-    route => pathname.startsWith(route)
-  );
-
-  if (!hasPermission) {
-    const dashboardUrl = new URL(`/${userRole}`, request.url);
-    return NextResponse.redirect(dashboardUrl);
-  }
-
-  return NextResponse.next();
-}
+export const config = {
+  matcher: [
+    '/admin/:path*',
+    '/tecnico/:path*',
+    '/cliente/:path*',
+    '/DashboardCliente',
+    '/DashboardTecnico'
+  ]
+};
