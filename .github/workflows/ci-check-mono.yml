@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: backend
+        working-directory: Maquinas_Poker\BACKEND
 
     steps:
       - name: 🔍 Checkout repositorio
@@ -27,7 +27,7 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: 📦 Instalar dependencias
-        run: npm ci
+        run: npm i
 
       - name: 🧪 Verificar TypeScript
         run: npx tsc --noEmit
@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: frontend
+        working-directory: Maquinas_Poker\FRONTEND
 
     steps:
       - name: 🔍 Checkout repositorio
@@ -71,7 +71,7 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: 📦 Instalar dependencias
-        run: npm ci
+        run: npm i
 
       - name: 🧪 Verificar TypeScript
         run: npx tsc --noEmit
