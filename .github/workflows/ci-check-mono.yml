@@ -13,16 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: Maquinas_Poker\BACKEND
+        working-directory: BACKEND
 
     steps:
       - name: 🔍 Checkout repositorio
         uses: actions/checkout@v4
-
-      - name: ⚙️ Configurar Node.js
-        uses: actions/setup-node@v4
         
-
       - name: 📦 Instalar dependencias
         run: npm i
 
