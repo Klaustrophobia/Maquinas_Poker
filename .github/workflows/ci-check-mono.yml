@@ -37,7 +37,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Install dependencies
-      run: npm ci
+      run: npm install
 
     - name: Verify TypeScript compilation
       run: npx tsc --noEmit
