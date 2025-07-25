@@ -1,85 +1,58 @@
-name: CI - Verificación backend y frontend
+name: Verify Dependencies and Build
 
 on:
   push:
-    branches: [master, main]
+    branches: [master]  # Ajusta según tus ramas principales
   pull_request:
-    branches: [master, main]
-  workflow_dispatch:
+    branches: [master]
 
 jobs:
-  check-backend:
-    name: 🔧 Verificar Backend
+  verify-backend:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: BACKEND
+        working-directory: ./maquinas_gestion_poker/BACKEND
 
     steps:
-      - name: 🔍 Checkout repositorio
-        uses: actions/checkout@v4
-        
-      - name: 📦 Instalar dependencias
-        run: npm i
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: 🧪 Verificar TypeScript
-        run: npx tsc --noEmit
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
 
-      - name: 🧹 Verificar ESLint
-        run: |
-          if [ -f .eslintrc.js ] || [ -f .eslintrc.json ]; then
-            npx eslint . --ext js,jsx,ts,tsx
-          else
-            echo "Sin configuración ESLint, se omite."
-          fi
+    - name: Install dependencies
+      run: npm ci
 
-      - name: 🧪 Ejecutar pruebas
-        run: |
-          if npm run | grep -q "test"; then
-            npm test
-          else
-            echo "Sin script de pruebas definido en package.json"
-          fi
+    - name: Verify TypeScript compilation
+      run: npx tsc --noEmit
 
-      - name: 🏗️ Build Backend
-        run: npm run build
+    - name: Build project
+      run: npm run build
 
-
-  check-frontend:
-    name: 💻 Verificar Frontend
+  verify-frontend:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: Maquinas_Poker\FRONTEND
+        working-directory: ./maquinas_gestion_poker/FRONTEND
 
     steps:
-      - name: 🔍 Checkout repositorio
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: ⚙️ Configurar Node.js
-        uses: actions/setup-node@v4
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
 
-      - name: 📦 Instalar dependencias
-        run: npm i
+    - name: Install dependencies
+      run: npm ci
 
-      - name: 🧪 Verificar TypeScript
-        run: npx tsc --noEmit
+    - name: Verify TypeScript compilation
+      run: npx tsc --noEmit
 
-      - name: 🧹 Verificar ESLint
-        run: |
-          if [ -f .eslintrc.js ] || [ -f .eslintrc.json ]; then
-            npx eslint . --ext js,jsx,ts,tsx
-          else
-            echo "Sin configuración ESLint, se omite."
-          fi
-
-      - name: 🧪 Ejecutar pruebas
-        run: |
-          if npm run | grep -q "test"; then
-            npm test
-          else
-            echo "Sin script de pruebas definido en package.json"
-          fi
-
-      - name: 🏗️ Build Frontend
-        run: npm run build
+    - name: Build project
+      run: npm run build
