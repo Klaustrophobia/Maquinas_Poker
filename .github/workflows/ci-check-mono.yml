@@ -21,10 +21,7 @@ jobs:
 
       - name: ⚙️ Configurar Node.js
         uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
+        
 
       - name: 📦 Instalar dependencias
         run: npm i
@@ -65,10 +62,6 @@ jobs:
 
       - name: ⚙️ Configurar Node.js
         uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
 
       - name: 📦 Instalar dependencias
         run: npm i
