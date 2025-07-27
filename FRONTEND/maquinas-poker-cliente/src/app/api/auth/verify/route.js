@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 //import { findUserById } from '@/lib/users';
-import { verifyToken } from '../../../../lib/jwt';
+import { verifyToken } from '../../../../libs/jwt';
 
 export async function GET(request) {
   const token = request.cookies.get('authToken')?.value;

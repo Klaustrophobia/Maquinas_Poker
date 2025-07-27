@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { generateToken } from '../../../../lib/jwt';
+import { generateToken } from '../../../../libs/jwt';
 
 export async function POST(request) {
   const { email, password } = await request.json();
