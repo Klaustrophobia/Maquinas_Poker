@@ -1,6 +1,6 @@
 import { authenticateRole } from '@/middleware/auth';
 import { NextRequest, NextResponse } from 'next/server';
-import { getDataSource } from '@/data-source';
+import { getDataSource } from '@/lib/data-source';
 import { Finanza } from '@/entity/Finanza';
 
 export async function GET(req: NextRequest) {

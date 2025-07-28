@@ -2,7 +2,7 @@
 import { authenticateRole } from '@/middleware/auth';
 import { NextRequest, NextResponse } from 'next/server';
 // importamos la conexion de TypeORM y la entidad
-import { getDataSource } from '@/data-source';
+import { getDataSource } from '@/lib/data-source';
 import { Mantenimiento } from '@/entity/Mantenimiento';
 
 export async function GET(req: NextRequest) {
