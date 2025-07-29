@@ -1,14 +1,13 @@
 // import { connectDB } from '@/lib/db';
+import { createMantenimientoController, deleteMantenimientoController, getAllMantenimientosController, updateMantenimientoController } from '@/controllers/mantenimiento.controller';
 import { authenticateRole } from '@/middleware/auth';
-import { error } from 'console';
-import { create } from 'domain';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
   const auth = await authenticateRole(['admin', 'tecnico'])(req);
   if (auth) return auth;
 
-  const result = await getAllManntenimientosController();
+  const result = await getAllMantenimientosController();
   if('error' in result) {
     return NextResponse.json({ error: result.error }, { status: 500 });
   }
@@ -38,8 +37,8 @@ export async function PUT(req: NextRequest) {
   const { id, mantenimientoData } = body;
 
   const result = await updateMantenimientoController(id, mantenimientoData);
-  if ('error' in result) {
-    return NextResponse.json({ error: result.error }, { status: 404 });
+  if (!result || 'error' in result) {
+    return NextResponse.json({ error: result?.error ?? 'Error desconocido' }, { status: 404 });
   }
 
   return NextResponse.json({ message: 'Mantenimiento actualizado exitosamente', mantenimiento: result }, { status: 200 });

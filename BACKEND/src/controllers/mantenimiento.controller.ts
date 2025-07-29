@@ -3,7 +3,8 @@ import { createMantenimientoService, deleteMantenimientoService,
  } from '@/services/mantenimiento.service';
 
  export async function getAllMantenimientosController() {
-    return await getAllMantenimientosService();
+    const result = await getAllMantenimientosService();
+    return result;
  }
 
  export async function createMantenimientoController(body: {
@@ -20,7 +21,8 @@ import { createMantenimientoService, deleteMantenimientoService,
     resultado: string;
     observaciones: string;
 }) {
-    return await createMantenimientoService(body);
+    const result = await createMantenimientoService(body);
+    return result;
 }
 
 export async function updateMantenimientoController(id: number, body: {
@@ -37,9 +39,11 @@ export async function updateMantenimientoController(id: number, body: {
     resultado?: string;
     observaciones?: string;
 }) {
-    return await updateMantenimientoService(id, body);
+    const result =await updateMantenimientoService(id, body);
+    return result;
 }
 
 export async function deleteMantenimientoController(id: number) {
-    return await deleteMantenimientoService(id);
+    const result = await deleteMantenimientoService(id);
+    return result;
 }
