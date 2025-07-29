@@ -1,20 +1,14 @@
-import { validateUserService, validateRegisterUserService } from '@/services/auth.service';
-import jwt from 'jsonwebtoken';
+import { loginUserService, registerUserService } from '@/services/auth.service';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'clave_secreta_maquinas_poker';
+export async function loginController(body: { nombre: string; password: string }) {
+  const { nombre, password } = body;
 
-export async function loginController(nombre: string, password: string) {
-  const user = await validateUserService(nombre, password);
-  console.log("UsuarioController", nombre, password, user);
-  if (!user) {
-    return { error: 'Credenciales inválidas' };
+  if (!nombre || !password) {
+    return { error: 'Nombre y contraseña son obligatorios' };
   }
 
-  const token = jwt.sign({ id: user.id, rol: user.rol }, JWT_SECRET, {
-    expiresIn: '4h',
-  });
-
-  return { token };
+  const result = await loginUserService(nombre, password);
+  return { ...result };
 }
 
 export async function registerController(body: { 
@@ -31,24 +25,15 @@ export async function registerController(body: {
             telefono } = body;
 
     if (!nombre || !email || !password || !rol || !telefono) {
-        return { error: 'Faltan campos requeridos (nombre, email, password, rol, telefono)' };
+        return { error: 'Faltan campos requeridos, verifique e intente nuevamente' };
     }
 
-    const result = await validateRegisterUserService(nombre, 
+    const result = await registerUserService(nombre, 
         email, password, rol, telefono);
 
     if (result.error) {
         return { error: result.error }
     }
     
-    const token = jwt.sign(
-        { id: result.newUser?.id,
-            rol: result.newUser?.rol,
-            email: result.newUser?.email
-        },
-        JWT_SECRET,
-        { expiresIn: '4h' }
-    );
-    console.log("UsuarioController2", token);
-    return { ...result, token };
+    return { ...result };
 }

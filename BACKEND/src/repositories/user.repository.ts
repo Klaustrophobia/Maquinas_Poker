@@ -7,6 +7,17 @@ export async function findUserByNombreRepository(nombre: string) {
     return userRepository.findOne( {where: { nombre }} );
 }
 
+export async function updateUltimoLoginRepository(id: number) {
+    const db = await getDataSource();
+    const userRepository = db.getRepository(User);
+    const user = await userRepository.findOne({ where: { id } });
+    if (!user) {
+        return null;
+    }
+    user.ultimo_login = new Date();
+    return userRepository.save(user);
+}
+
 export async function getAllUsersRepository() {
     const db = await getDataSource();
     const userRepository = db.getRepository(User);
@@ -25,4 +36,22 @@ export async function findUserByEmailRepository(email: string) {
     return db.getRepository(User).findOne(
         { where: { email }}
     );
+}
+
+export async function updateUserRepository(id: number, userData: Partial<User>) {
+    const db = await getDataSource();
+    const userRepository = db.getRepository(User);
+    await userRepository.update(id, userData);
+    return userRepository.findOne({ where: { id } });
+}
+
+export async function deleteUserRepository(id: number) {
+    const db = await getDataSource();
+    const userRepository = db.getRepository(User);
+    const user = await userRepository.findOne({ where: { id } });
+    if (!user) {
+        return null;
+    }
+    await userRepository.remove(user);
+    return user;
 }

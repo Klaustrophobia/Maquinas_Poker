@@ -17,5 +17,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: result.error }, { status: 400 });
   }
 
-  return NextResponse.json({ message: 'Usuario registrado exitosamente', user: result.newUser }, { status: 201 });
+  return NextResponse.json({ message: 'Usuario registrado exitosamente', 
+    user: result.newUser,
+    token: result.token }, { status: 201 });
 }
