@@ -15,7 +15,7 @@ export default withAuth(
     // Verificación más estricta de autenticación
     if (!token) {
       console.log('Middleware: No hay token, redirigiendo a login');
-      return NextResponse.redirect(new URL(`/auth/login?error=No autenticado&from=${encodeURIComponent(pathname)}`, request.url));
+      return NextResponse.redirect(new URL(`/login?error=No autenticado&from=${encodeURIComponent(pathname)}`, request.url));
     }
 
     // Verificación de rutas protegidas
@@ -23,15 +23,15 @@ export default withAuth(
       if (routes.some(route => pathname.startsWith(route))) {
         if (role === 'admin' && token.role !== 'admin') {
           console.log(`Middleware: Intento de acceso a ${pathname} sin rol admin`);
-          return NextResponse.redirect(new URL('/auth/login?error=Requiere rol admin', request.url));
+          return NextResponse.redirect(new URL('/login?error=Requiere rol admin', request.url));
         }
         if (role === 'tecnico' && !['tecnico', 'admin'].includes(token.role)) {
           console.log(`Middleware: Intento de acceso a ${pathname} sin rol tecnico`);
-          return NextResponse.redirect(new URL('/auth/login?error=Requiere rol tecnico', request.url));
+          return NextResponse.redirect(new URL('/login?error=Requiere rol tecnico', request.url));
         }
         if (role === 'cliente' && !['cliente', 'admin'].includes(token.role)) {
           console.log(`Middleware: Intento de acceso a ${pathname} sin rol cliente`);
-          return NextResponse.redirect(new URL('/auth/login?error=Requiere rol cliente', request.url));
+          return NextResponse.redirect(new URL('/login?error=Requiere rol cliente', request.url));
         }
       }
     }
@@ -50,9 +50,9 @@ export default withAuth(
       },
     },
     pages: {
-      signIn: '/auth/login',
-      error: '/auth/login?error=',
-      signOut: '/auth/login'
+      signIn: '/login',
+      error: '/login?error=',
+      signOut: '/login'
     }
   }
 );

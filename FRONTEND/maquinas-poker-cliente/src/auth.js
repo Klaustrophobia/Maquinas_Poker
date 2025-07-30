@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import db from '@/libs/db';
+
 
 export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -24,26 +24,35 @@ export const authOptions = {
             throw new Error('Email y contraseña son requeridos');
           }
 
-          const user = db.prepare(`
-            SELECT id, name, email, password, role 
-            FROM users 
-            WHERE email = ?
-          `).get(credentials.email.toLowerCase().trim());
+          // Llamada a tu API backend
+          const res = await fetch('http://localhost:4000/api/usuarios/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              email: credentials.email, 
+              password: credentials.password 
+            }),
+          });
 
-          if (!user) {
+          const response = await res.json();
+
+          if (!response.user) {
             throw new Error('Usuario no encontrado');
           }
 
-          // Comparación directa (en producción usar bcrypt)
-          if (credentials.password !== user.password) {
-            throw new Error('Contraseña incorrecta');
+          if (!response.user.activo) {
+            throw new Error('Usuario inactivo');
           }
+
+          const user = response.user;
 
           return {
             id: user.id.toString(),
-            name: user.name,
-            email: user.email,
-            role: user.role
+            name: user.nombre,
+            email: user.correo,
+            role: user.rol,
+            telefono: user.telefono,
+            activo: user.activo
           };
         } catch (error) {
           console.error('Error en autenticación:', error.message);
@@ -55,8 +64,11 @@ export const authOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = user.role;
+        // Guardar todos los datos del usuario en el token
         token.id = user.id;
+        token.role = user.role || user.rol;
+        token.telefono = user.telefono;
+        token.activo = user.activo;
       }
       return token;
     },
@@ -66,7 +78,10 @@ export const authOptions = {
           id: token.id,
           name: token.name,
           email: token.email,
-          role: token.role
+          role: token.role,
+          rol: token.rol,
+          telefono: token.telefono,
+          activo: token.activo
         };
       }
       return session;

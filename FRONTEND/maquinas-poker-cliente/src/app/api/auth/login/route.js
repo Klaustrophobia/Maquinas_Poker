@@ -1,45 +1,43 @@
 import { NextResponse } from 'next/server';
-import { generateToken } from '../../../../libs/jwt';
+import { authOptions } from '@/auth';
+import { compare } from 'bcrypt';
 
 export async function POST(request) {
-  const { email, password } = await request.json();
+  try {
+    const { email, password } = await request.json();
 
-  const res = await fetch('http://localhost:3000/api/usuarios/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+    // Llamada directa a tu API backend
+    const res = await fetch('http://localhost:4000/api/usuarios/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
 
-  const { user } = await res.json();
-  
-  if (!user) {
+    const { user } = await res.json();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "Credenciales inválidas" },
+        { status: 401 }
+      );
+    }
+
+    // Devuelve los datos del usuario para que el cliente pueda iniciar sesión
+    return NextResponse.json({
+      success: true,
+      user: {
+        id: user.id,
+        name: user.nombre,
+        email: user.correo,
+        role: user.rol
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error en autenticación:', error);
     return NextResponse.json(
-      { error: "Credenciales inválidas" },
-      { status: 401 }
+      { error: "Error en el servidor" },
+      { status: 500 }
     );
   }
-
-  const token = generateToken(user.id, user.rol);
-  
-  // Creamos la respuesta y seteamos la cookie HTTP-only
-  const response = NextResponse.json({
-    id: user.id,
-    name: user.nombre,
-    email: user.correo,
-    rol: user.rol,
-    telefono: user.telefono,
-    activo: user.activo
-  });
-
-  response.cookies.set({
-    name: "authToken",
-    value: token,
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 60 * 60 * 2, // 2 horas
-    path: "/",
-  });
-
-  return response;
 }

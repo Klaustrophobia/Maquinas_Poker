@@ -1,50 +1,65 @@
 'use client';
-
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../context/AuthContext';
+import { signIn, getSession } from "next-auth/react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
-  const { login } = useAuth();
+  const [isLogging, setIsLogging] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setIsLoading(true);
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false
       });
 
-      if (response.ok) {
-        const user = await response.json();
-        login(user);
-        console.log('user', user);
-        switch (user.rol) {
-          case 'admin':
-            router.push('/admin');
-            break;
-          case 'cliente':
-            router.push('/cliente');
-            break;
-          case 'tecnico':
-            router.push('/tecnico');
-            break;
-          default:
-            router.push('/');
-        }
-      } else {
-        const errorData = await response.json();
-        setError(errorData.error || 'Error en la autenticación');
+      if (result?.error) {
+        setError('Credenciales inválidas');
+        return;
+      }
+
+      // Next-Auth maneja la sesión automáticamente
+      console.log('Login exitoso');
+      
+      // Obtener la sesión actualizada
+      const session = await getSession();
+      console.log('session', session);
+      
+      // El rol está dentro de session.user
+      const rol = session?.user?.role || session?.user?.rol;
+      console.log('rol', rol);
+
+      setIsLogging(true);
+      
+      switch (rol) {
+        case 'admin':
+          router.push('/admin');
+          break;
+        case 'cliente':
+          router.push('/cliente');
+          break;
+        case 'tecnico':
+          router.push('/tecnico');
+          break;
+        default:
+          router.push('/');
       }
     } catch (err) {
+      console.error('Error:', err);
       setError('Error de conexión con el servidor');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -107,7 +122,15 @@ export default function LoginPage() {
           type="submit"
           className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md"
         >
-          Iniciar Sesión
+          {isLoading ? (
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          ) : isLogging ? (
+            <i className="bi bi-check-all"></i>
+          ) : (
+            'Iniciar Sesión'
+          )}
         </button>
       </form>
     </div>

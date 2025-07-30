@@ -1,19 +1,20 @@
 'use client';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/app/context/AuthContext';
+import { useSession, signOut } from 'next-auth/react';
 
 export default function AdminLayout({ children }) {
-  const { user, loading } = useAuth();
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   useEffect(() => {
-    console.log("Usuario actual:", user);
-    if (!loading && (!user || user.rol !== 'admin')) {
+    if (status === 'loading') return;
+    if (!session || session.user.role !== 'admin') {
       router.push('/login');
     }
-  }, [user, loading, router]);
+  }, [session, status, router]);
 
-  if (loading) {
+  if (status === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p>Cargando...</p>
@@ -21,14 +22,33 @@ export default function AdminLayout({ children }) {
     );
   }
 
-  if (!user || user.rol !== 'admin') {
+  if (!session || session.user.role !== 'admin') {
     return null; // O un mensaje de redirección
   }
 
   return (
     <div>
-      <header className="bg-gray-800 text-white p-4">
-        <h1>Panel de Administración</h1>
+      <header className="bg-white border-bottom p-3">
+        <div className="container-fluid">
+          <div className="d-flex justify-content-between align-items-center">
+            <h1 className="h3 mb-0 text-dark">Panel de Administración</h1>
+
+            <nav className="d-flex align-items-center gap-4">
+              <a href="/usuarios" className="text-decoration-none">
+                Gestión de Usuarios
+              </a>
+              <a href="/reportes" className="text-decoration-none">
+                Reportes
+              </a>
+              <a href="/configuracion" className="text-decoration-none">
+                Configuración
+              </a>
+              <button className="btn btn-danger" onClick={signOut}>
+                Cerrar Sesión
+              </button>
+            </nav>
+          </div>
+        </div>
       </header>
       <main>{children}</main>
     </div>

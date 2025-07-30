@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDataSource } from '@/data-source';
 import { User } from '@/entity/User';
 
-//GET para el login de usuarios
+//POST para el login de usuarios
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -30,6 +30,9 @@ export async function POST(req: NextRequest) {
     if (user.password_hash !== password) {
       return NextResponse.json({ error: 'Contraseña incorrecta' }, { status: 401 });
     }
+
+    user.ultimo_login = new Date();
+    await userRepository.save(user);
 
     // Respuesta exitosa con el token
     return NextResponse.json({

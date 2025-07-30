@@ -1,14 +1,23 @@
-// app/cliente/page.jsx
-import { redirect } from 'next/navigation';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/auth';
+'use client';
 
-export default async function ClientePage() {
-  const session = await getServerSession(authOptions);
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useSession } from "next-auth/react";
+
+export default function ClientePage() {
+  const router = useRouter();
+  const { data: session, status } = useSession();
   
-  if (!session || session.user.role !== 'cliente') {
-    redirect('/auth/login?error=Acceso no autorizado');
-  }
+  useEffect(() => {
+    if (status === 'loading') return;
+    
+    if (!session || session.user.role !== 'cliente') {
+      router.replace('/auth/login?error=Acceso no autorizado');
+      return;
+    }
 
-  redirect('/cliente/DashboardCliente');
+    router.replace('/cliente/DashboardCliente');
+  }, [session, status, router]);
+
+  return null;
 }

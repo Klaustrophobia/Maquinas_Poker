@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -142,7 +142,7 @@ export default function DashboardCliente() {
             <Link href="/cliente/inventario" className="btn btn-sm btn-outline-light me-2">
               <i className="bi bi-list-check me-1"></i> Ver Inventario
             </Link>
-            <Link href="/api/auth/signout" className="btn btn-sm btn-light">
+            <Link href="#" onClick={signOut} className="btn btn-sm btn-light">
               <i className="bi bi-box-arrow-right me-1"></i> Cerrar sesión
             </Link>
           </div>
