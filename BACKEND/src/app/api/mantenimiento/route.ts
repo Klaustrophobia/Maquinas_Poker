@@ -37,8 +37,8 @@ export async function PUT(req: NextRequest) {
   const { id, mantenimientoData } = body;
 
   const result = await updateMantenimientoController(id, mantenimientoData);
-  if (!result || 'error' in result) {
-    return NextResponse.json({ error: result?.error ?? 'Error desconocido' }, { status: 404 });
+  if ('error' in result) {
+    return NextResponse.json({ error: result.error }, { status: 404 });
   }
 
   return NextResponse.json({ message: 'Mantenimiento actualizado exitosamente', mantenimiento: result }, { status: 200 });
@@ -60,5 +60,5 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: result.error }, { status: 404 });
   }
 
-  return NextResponse.json({ message: 'Mantenimiento eliminado exitosamente' });
+  return NextResponse.json({ message: 'Mantenimiento eliminado exitosamente', mantenimiento: result , status: 200});
 }
