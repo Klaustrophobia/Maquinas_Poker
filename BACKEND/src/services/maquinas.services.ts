@@ -1,0 +1,44 @@
+import { MaquinaRepository } from '@/repositories/maquinas.repository';
+import { Maquina } from '@/entity/Maquina';
+
+export const MaquinaService = {
+  async getMaquinas(id?: number) {
+    return id ? MaquinaRepository.findById(id) : MaquinaRepository.findAll();
+  },
+
+  async createMaquina(data: any) {
+    const proveedor = await MaquinaRepository.findProveedorById(data.proveedor_id);
+    const ubicacion = await MaquinaRepository.findUbicacionById(data.ubicacion_id);
+
+    if (!proveedor || !ubicacion) throw new Error('Proveedor o ubicación no encontrada');
+
+    const maquina = {
+      ...data,
+      proveedor,
+      ubicacion,
+      fecha_adquisicion: new Date(data.fecha_adquisicion),
+      fecha_instalacion: data.fecha_instalacion ? new Date(data.fecha_instalacion) : null,
+      ultimo_mantenimiento: data.ultimo_mantenimiento ? new Date(data.ultimo_mantenimiento) : null,
+      proximo_mantenimiento: data.proximo_mantenimiento ? new Date(data.proximo_mantenimiento) : null,
+      creado_en: new Date(),
+      actualizado_en: new Date()
+    };
+
+    return MaquinaRepository.create(maquina as Maquina);
+  },
+
+  async updateMaquina(data: any) {
+    const maquina = await MaquinaRepository.findById(data.id);
+    if (!maquina) throw new Error('Máquina no encontrada');
+
+    Object.assign(maquina, data, { actualizado_en: new Date() });
+    return MaquinaRepository.update(maquina);
+  },
+
+  async deleteMaquina(id: number) {
+    const maquina = await MaquinaRepository.findById(id);
+    if (!maquina) throw new Error('Máquina no encontrada');
+
+    return MaquinaRepository.remove(maquina);
+  }
+};
