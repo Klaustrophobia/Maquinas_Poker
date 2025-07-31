@@ -18,30 +18,30 @@ export class Mantenimiento {
   descripcion!: string;
 
   @Column({nullable: true})
-  acciones_realizadas!: string;
+  acciones_realizadas?: string;
 
   @Column({nullable: true})
-  repuestos_utilizados!: string;
+  repuestos_utilizados?: string;
 
   @Column({type: 'decimal', precision: 10, scale: 2, nullable: true})
-  costo_estimado!: number;
+  costo_estimado?: number;
 
   @Column({type: 'decimal', precision: 10, scale: 2, nullable: true})
-  costo_real!: number;
+  costo_real?: number;
 
   @Column({type: 'datetime', nullable: true})
-  fecha_programada!: Date;
+  fecha_programada?: Date;
 
   @Column({type: 'datetime', nullable: true})
-  fecha_realizacion!: Date;
+  fecha_realizacion?: Date;
 
   @ManyToOne(() => Tecnico)
   @JoinColumn({ name: 'tecnico_id' })
-  tecnico!: Tecnico;
+  tecnico?: Tecnico;
 
   @Column({nullable: true})
-  resultado!: string;
+  resultado?: string;
 
   @Column({nullable: true})
-  observaciones!: string;
+  observaciones?: string;
 }

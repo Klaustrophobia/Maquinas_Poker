@@ -1,0 +1,42 @@
+import { User } from '@/entity/User';
+import { deleteUserRepository, getAllUsersRepository, updateUserRepository } from '@/repositories/user.repository';
+
+export async function getAllUsersService() {
+  const users = await getAllUsersRepository();
+  return users.map(({ id, nombre, email, rol }) => ({
+    id,
+    nombre,
+    email,
+    rol,
+  }));
+}
+
+export async function updateUserService(id: number, userData: Partial<User>) {
+    const updatedUser = await updateUserRepository(id, userData);
+    if (!updatedUser) {
+        return { error: 'No se pudo actualizar el usuario' };
+    }
+    return {
+        id: updatedUser.id,
+        nombre: updatedUser.nombre,
+        email: updatedUser.email,
+        rol: updatedUser.rol,
+        telefono: updatedUser.telefono,
+        activo: updatedUser.activo
+    };
+}
+
+export async function deleteUserService(id: number) {
+    const deletedUser = await deleteUserRepository(id);
+    if (!deletedUser) {
+        return { error: 'No se pudo eliminar el usuario' };
+    }
+
+    return {
+        id: deletedUser.id,
+        nombre: deletedUser.nombre,
+        email: deletedUser.email,
+        rol: deletedUser.rol,
+        telefono: deletedUser.telefono
+    };
+}
