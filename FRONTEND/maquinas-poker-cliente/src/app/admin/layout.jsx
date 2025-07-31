@@ -31,9 +31,12 @@ export default function AdminLayout({ children }) {
       <header className="bg-white border-bottom p-3">
         <div className="container-fluid">
           <div className="d-flex justify-content-between align-items-center">
-            <h1 className="h3 mb-0 text-dark">Panel de Administración</h1>
+            <a href="/admin" className="h3 mb-0 text-dark">Panel de Administración</a>
 
             <nav className="d-flex align-items-center gap-4">
+              <a href="/admin/inventario" className="text-decoration-none">
+                Inventario
+              </a>
               <a href="/usuarios" className="text-decoration-none">
                 Gestión de Usuarios
               </a>

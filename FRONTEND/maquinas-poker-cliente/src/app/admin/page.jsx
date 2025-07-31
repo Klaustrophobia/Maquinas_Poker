@@ -1,73 +1,43 @@
 'use client';
-import { useState } from "react"
-
-const machineData = [
-  {
-    id: "PKR-001",
-    location: "Sala Principal",
-    status: "operational",
-    lastMaintenance: "2024-01-15",
-    nextMaintenance: "2024-02-15",
-    uptime: 98.5,
-  },
-  {
-    id: "PKR-002",
-    location: "Sala VIP",
-    status: "maintenance",
-    lastMaintenance: "2024-01-20",
-    nextMaintenance: "2024-01-25",
-    uptime: 95.2,
-  },
-  {
-    id: "PKR-003",
-    location: "Entrada",
-    status: "warning",
-    lastMaintenance: "2024-01-10",
-    nextMaintenance: "2024-02-10",
-    uptime: 89.1,
-  },
-  {
-    id: "PKR-004",
-    location: "Bar",
-    status: "operational",
-    lastMaintenance: "2024-01-18",
-    nextMaintenance: "2024-02-18",
-    uptime: 99.1,
-  },
-  {
-    id: "PKR-005",
-    location: "Terraza",
-    status: "error",
-    lastMaintenance: "2024-01-05",
-    nextMaintenance: "2024-01-28",
-    uptime: 76.3,
-  },
-]
-
-const alerts = [
-  { id: 1, machine: "PKR-005", type: "error", message: "Fallo en sistema de pago", time: "Hace 2 horas" },
-  { id: 2, machine: "PKR-003", type: "warning", message: "Mantenimiento programado mañana", time: "Hace 4 horas" },
-  { id: 3, machine: "PKR-002", type: "maintenance", message: "Mantenimiento en progreso", time: "Hace 6 horas" },
-]
+import { useState, useEffect } from "react";
 
 const maintenanceSchedule = [
   { id: 1, machine: "PKR-003", type: "Preventivo", date: "2024-01-29", technician: "Juan Pérez" },
   { id: 2, machine: "PKR-001", type: "Limpieza", date: "2024-01-30", technician: "María García" },
   { id: 3, machine: "PKR-004", type: "Preventivo", date: "2024-02-01", technician: "Carlos López" },
-]
+];
 
 export default function AdminDashboard() {
-  const [selectedTab, setSelectedTab] = useState("overview")
+  const [selectedTab, setSelectedTab] = useState("overview");
+  const [machineData, setMachineData] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:4000/api/maquinas/list', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        const data = await response.json();
+        console.log('Response status:', data);
+        setMachineData(data);
+      } catch (error) {
+        console.error('Error al obtener datos de máquinas:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "operational":
+      case "Operativo":
         return "success"
-      case "warning":
+      case "Advertencia":
         return "warning"
-      case "maintenance":
+      case "En Mantenimiento":
         return "info"
-      case "error":
+      case "Error":
         return "danger"
       default:
         return "secondary"
@@ -76,11 +46,11 @@ export default function AdminDashboard() {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case "operational":
+      case "operativo":
         return "bi-check-circle-fill"
-      case "warning":
+      case "advertencia":
         return "bi-exclamation-triangle-fill"
-      case "maintenance":
+      case "en Mantenimiento":
         return "bi-tools"
       case "error":
         return "bi-x-circle-fill"
@@ -89,9 +59,27 @@ export default function AdminDashboard() {
     }
   }
 
-  const operationalMachines = machineData.filter((m) => m.status === "operational").length
-  const totalMachines = machineData.length
-  const averageUptime = machineData.reduce((acc, m) => acc + m.uptime, 0) / totalMachines
+  const operationalMachines = machineData.filter((m) => m.estado === "Operativo").length;
+  const alerts = machineData.filter((m) => m.estado === "Error" || m.estado === "Advertencia");
+  const totalMachines = machineData.length;
+  const ahora = new Date();
+  const hace30Dias = new Date();
+  hace30Dias.setDate(ahora.getDate() - 30);
+  const hace7Dias = new Date();
+  hace7Dias.setDate(ahora.getDate() - 7);
+  const sumaTiemposActivos = machineData.reduce((acc, m) => {
+    const fechaInicio = new Date(m.fecha_instalacion);
+    const fechaFin = new Date(m.actualizado_en); 
+
+    const desde = fechaInicio > hace30Dias ? fechaInicio : hace30Dias;
+    const hasta = fechaFin < ahora ? fechaFin : ahora;
+
+    const diffMs = hasta - desde;
+    const diffDias = diffMs > 0 ? diffMs / (1000 * 60 * 60 * 24) : 0;
+
+    return acc + diffDias;
+  }, 0);
+  const averageUptime = sumaTiemposActivos / totalMachines
 
   return (
 
@@ -122,7 +110,7 @@ export default function AdminDashboard() {
                     <h6 className="card-title text-muted mb-0">Tiempo Promedio Activo</h6>
                     <i className="bi bi-activity text-primary fs-4"></i>
                   </div>
-                  <h2 className="mb-1">{averageUptime.toFixed(1)}%</h2>
+                  <h2 className="mb-1">{averageUptime.toFixed(1)} días</h2>
                   <small className="text-muted">Últimos 30 días</small>
                 </div>
               </div>
@@ -210,14 +198,14 @@ export default function AdminDashboard() {
                           <small className="text-muted">Distribución por estado operativo</small>
                         </div>
                         <div className="card-body">
-                          {["operational", "warning", "maintenance", "error"].map((status) => {
-                            const count = machineData.filter((m) => m.status === status).length
+                          {["Operativo", "Advertencia", "En Mantenimiento", "Error"].map((status) => {
+                            const count = machineData.filter((m) => m.estado === status).length
                             const percentage = (count / totalMachines) * 100
                             const labels = {
-                              operational: "Operativas",
-                              warning: "Con advertencias",
-                              maintenance: "En mantenimiento",
-                              error: "Con errores",
+                              Operativo: "Operativas",
+                              Advertencia: "Advertencias",
+                              "En Mantenimiento": "En Mantenimiento",
+                              Error: "Errores",
                             }
                             return (
                               <div key={status} className="mb-3">
@@ -282,19 +270,19 @@ export default function AdminDashboard() {
                         >
                           <div className="d-flex align-items-center">
                             <i
-                              className={`bi ${getStatusIcon(machine.status)} text-${getStatusColor(machine.status)} me-3`}
+                              className={`bi ${getStatusIcon(machine.estado)} text-${getStatusColor(machine.estado)} me-3`}
                             ></i>
                             <div>
-                              <div className="fw-medium">{machine.id}</div>
-                              <small className="text-muted">{machine.location}</small>
+                              <div className="fw-medium">{machine.nombre}</div>
+                              <small className="text-muted">{machine.ultima_ubicacion_id}</small>
                             </div>
                           </div>
                           <div className="d-flex align-items-center">
-                            <span className={`badge bg-${getStatusColor(machine.status)} me-3`}>
-                              {machine.status === "operational" && "Operativa"}
-                              {machine.status === "warning" && "Advertencia"}
-                              {machine.status === "maintenance" && "Mantenimiento"}
-                              {machine.status === "error" && "Error"}
+                            <span className={`badge bg-${getStatusColor(machine.estado)} me-3`}>
+                              {machine.estado === "Operativo" && "Operativa"}
+                              {machine.estado === "Advertencia" && "Advertencia"}
+                              {machine.estado === "En Mantenimiento" && "Mantenimiento"}
+                              {machine.estado === "Error" && "Error"}
                             </span>
                             <div className="text-end me-3">
                               <div className="small fw-medium">{machine.uptime}% uptime</div>
@@ -362,11 +350,11 @@ export default function AdminDashboard() {
                       {alerts.map((alert) => (
                         <div key={alert.id} className="d-flex align-items-start p-3 border rounded mb-3">
                           <div className="me-3 mt-1">
-                            {alert.type === "error" && <i className="bi bi-exclamation-circle text-danger fs-5"></i>}
-                            {alert.type === "warning" && (
+                            {alert.estado === "Error" && <i className="bi bi-exclamation-circle text-danger fs-5"></i>}
+                            {alert.estado === "Advertencia" && (
                               <i className="bi bi-exclamation-triangle text-warning fs-5"></i>
                             )}
-                            {alert.type === "maintenance" && <i className="bi bi-clock text-info fs-5"></i>}
+                            {alert.estado === "En Mantenimiento" && <i className="bi bi-clock text-info fs-5"></i>}
                           </div>
                           <div className="flex-grow-1">
                             <div className="d-flex justify-content-between align-items-center">

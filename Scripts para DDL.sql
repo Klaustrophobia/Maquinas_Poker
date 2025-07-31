@@ -1,5 +1,9 @@
 -- Script de Creación de Tablas para SQL Server
 
+USE gestion_maquinas_poker;
+GO
+
+
 -- Tabla tipos_transaccion
 CREATE TABLE tipos_transaccion (
     id INT PRIMARY KEY IDENTITY(1,1),
