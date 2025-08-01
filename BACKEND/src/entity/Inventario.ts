@@ -14,7 +14,7 @@ export class Inventario {
   cantidad!: number;
 
   @Column({ unique: true, nullable: true })
-  ubicacion_almacen!: string;
+  ubicacion_id!: string;
 
   @Column({ type: 'datetime', nullable: true })
   ultima_entrada_fecha!: Date;

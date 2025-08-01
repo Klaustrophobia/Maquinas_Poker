@@ -10,8 +10,8 @@ export async function OPTIONS() {
 }
 
 export async function GET(req: NextRequest) {
-  const auth = await authenticateRole(['admin', 'tecnico'])(req);
-  if (auth) return auth;
+  // const auth = await authenticateRole(['admin', 'tecnico'])(req);
+  // if (auth) return auth;
 
   try {
     const db = await getDataSource();
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
     const {
       repuesto_id,
       cantidad,
-      ubicacion_almacen,
+      ubicacion_id,
       ultima_entrada_fecha,
       ultima_entrada_cantidad,
       ultima_salida_fecha,
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
       notas
     } = body;
 
-    if (!repuesto_id || cantidad == null || !ubicacion_almacen || !ultima_entrada_fecha || !ultima_salida_fecha) {
+    if (!repuesto_id || cantidad == null || !ubicacion_id || !ultima_entrada_fecha || !ultima_salida_fecha) {
       return NextResponse.json({ error: 'Faltan campos requeridos' }, { status: 400 });
     }
 
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
     const nuevoInventario = inventarioRepository.create({
       repuesto,
       cantidad,
-      ubicacion_almacen,
+      ubicacion_id,
       ultima_entrada_fecha: new Date(ultima_entrada_fecha),
       ultima_entrada_cantidad,
       ultima_salida_fecha: new Date(ultima_salida_fecha),

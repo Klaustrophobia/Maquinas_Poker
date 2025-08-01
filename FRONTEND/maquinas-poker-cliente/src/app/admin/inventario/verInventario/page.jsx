@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import UbicacionNombre from '../../../../components/ubicacion/ubicacion-nombre'
 
 export default function VerInventario() {
   const [inventario, setInventario] = useState([]);
@@ -15,7 +16,6 @@ export default function VerInventario() {
         });
 
         const data = await response.json();
-        console.log('Response status:', data);
         setInventario(data);
       } catch (error) {
         console.error('Error al obtener datos de máquinas:', error);
@@ -65,8 +65,8 @@ export default function VerInventario() {
 
               <p className="text-gray-700"><span className="font-semibold text-gray-600">ID Artículo:</span> {item.id}</p>
               <p className="text-gray-700"><span className="font-semibold text-gray-600">Cantidad:</span> {item.cantidad}</p>
-              <p className="text-gray-700"><span className="font-semibold text-gray-600">Ubicación:</span> {item.ubicacion_almacen}</p>
-              <p className="text-gray-700"><span className="font-semibold text-gray-600">Stock Mínimo:</span> {item.stock_minimo}</p>
+              <UbicacionNombre item={item} />
+              <p className="text-gray-700"><span className="font-semibold text-gray-600">Stock Mínimo:</span> {item.stock}</p>
 
               <div className="mt-4 border-t border-gray-200 pt-3 text-sm text-gray-600">
                 <p><span className="font-semibold">Última Entrada:</span> {new Date(item.ultima_entrada_fecha).toLocaleDateString('es-HN', { year: 'numeric', month: 'short', day: 'numeric' })}</p>
