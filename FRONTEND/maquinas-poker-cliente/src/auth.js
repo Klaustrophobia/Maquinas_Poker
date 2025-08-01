@@ -36,6 +36,10 @@ export const authOptions = {
 
           const response = await res.json();
 
+           if ('error' in response) {
+            throw new Error(response.error || 'Error en la autenticación');
+          }
+
           if (!response.user) {
             throw new Error('Usuario no encontrado');
           }

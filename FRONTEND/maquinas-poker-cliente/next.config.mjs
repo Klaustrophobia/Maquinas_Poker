@@ -14,17 +14,17 @@
 //export default nextConfig
 
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+// next.config.mjs
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// Obtener el equivalente a __dirname en ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    serverActions: {} // Activadas sin propiedades extra
     serverActions: {
       enabled: true
     }
@@ -36,6 +36,6 @@ const nextConfig = {
     };
     return config;
   }
-}
+};
 
 export default nextConfig;

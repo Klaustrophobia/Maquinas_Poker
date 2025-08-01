@@ -1,13 +1,13 @@
 import { loginUserService, registerUserService } from '@/services/auth.service';
 
-export async function loginController(body: { nombre: string; password: string }) {
-  const { nombre, password } = body;
+export async function loginController(body: { email: string; password: string }) {
+  const { email, password } = body;
 
-  if (!nombre || !password) {
-    return { error: 'Nombre y contraseña son obligatorios' };
+  if (!email || !password) {
+    return { error: 'Correo y contraseña son obligatorios' };
   }
 
-  const result = await loginUserService(nombre, password);
+  const result = await loginUserService(email, password);
   return { ...result };
 }
 

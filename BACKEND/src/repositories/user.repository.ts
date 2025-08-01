@@ -33,9 +33,8 @@ export async function createUserRepository(userData: Partial<User>) {
 
 export async function findUserByEmailRepository(email: string) {
     const db = await getDataSource();
-    return db.getRepository(User).findOne(
-        { where: { email }}
-    );
+    const userRepository = db.getRepository(User);
+    return userRepository.findOne({ where: { email } });
 }
 
 export async function updateUserRepository(id: number, userData: Partial<User>) {

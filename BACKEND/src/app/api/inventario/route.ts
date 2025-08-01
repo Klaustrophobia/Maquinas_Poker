@@ -3,6 +3,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDataSource } from '@/lib/data-source';
 import { Inventario } from '@/entity/Inventario';
 import { Repuesto } from '@/entity/Repuesto';
+import { corsHeaders, handlePreflight } from '@/lib/cors';
+
+export async function OPTIONS() {
+  return handlePreflight();
+}
 
 export async function GET(req: NextRequest) {
   const auth = await authenticateRole(['admin', 'tecnico'])(req);
@@ -11,10 +16,11 @@ export async function GET(req: NextRequest) {
   try {
     const db = await getDataSource();
     const inventarioRepository = db.getRepository(Inventario);
-    const result = await inventarioRepository.find({
-      relations: ['repuesto']
+    const result = await inventarioRepository.find();
+    return new NextResponse(JSON.stringify(result), {
+      status: 200,
+      headers: corsHeaders,
     });
-    return NextResponse.json(result);
   } catch (error) {
     if (error instanceof Error) {
       console.error('Error al obtener inventario:', error.message);
@@ -77,7 +83,10 @@ export async function POST(req: NextRequest) {
     });
 
     await inventarioRepository.save(nuevoInventario);
-    return NextResponse.json({ message: 'Inventario creado exitosamente' });
+    return new NextResponse(JSON.stringify({ message: 'Inventario creado exitosamente' }), {
+      status: 200,
+      headers: corsHeaders,
+    });
   } catch (error) {
     if (error instanceof Error) {
       console.error('Error al crear inventario:', error.message);
@@ -123,7 +132,11 @@ export async function PUT(req: NextRequest) {
     inventario.actualizado_en = new Date();
 
     await inventarioRepository.save(inventario);
-    return NextResponse.json({ message: 'Inventario actualizado correctamente' });
+    return new NextResponse(JSON.stringify({ message: 'Inventario actualizado correctamente' }), {
+      status: 200,
+      headers: corsHeaders,
+    });
+
   } catch (error) {
     if (error instanceof Error) {
       console.error('Error al actualizar inventario:', error.message);

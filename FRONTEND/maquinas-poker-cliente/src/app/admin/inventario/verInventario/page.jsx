@@ -1,78 +1,29 @@
 'use client';
-
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function VerInventario() {
   const [inventario, setInventario] = useState([]);
-  const [error, setError] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
-    try {
-      setError(null);
-      const datosEjemplo = [
-        {
-          id: 1,
-          repuesto_id: 'SN-1001', // This seems like a serial number for a machine, not a 'repuesto_id'. Assuming it represents a unique ID for the item.
-          nombre_repuesto: "Lucky Spin 2000", // This seems like a machine name, not a 'repuesto_name'. Renamed for clarity.
-          cantidad: 1, // Assuming this is the quantity of the *machine* itself, typically 1 for unique machines.
-          ubicacion_almacen: 'Sala A1',
-          ultima_entrada_fecha: '2023-04-10T00:00:00', // Changed to represent "última fecha de registro/adquisición"
-          ultima_entrada_cantidad: 0, // This field seems redundant for machines (quantity is usually 1). Keeping for now but consider its purpose.
-          ultima_salida_fecha: '2023-05-15T00:00:00', // Changed to represent "última fecha de movimiento/reubicación"
-          ultima_salida_cantidad: 0, // Redundant for machines. Keeping for now.
-          stock_minimo: 1, // Redundant for machines (usually 1). Keeping for now.
-          notas: 'Sin observaciones. Máquina instalada correctamente.',
-          creado_en: '2023-04-05T10:00:00',
-          actualizado_en: '2024-06-01T12:00:00',
-        },
-        {
-          id: 2,
-          repuesto_id: 'SN-1002',
-          nombre_repuesto: "Poker King Deluxe",
-          cantidad: 1,
-          ubicacion_almacen: 'Sala B3',
-          ultima_entrada_fecha: '2022-11-20T00:00:00',
-          ultima_entrada_cantidad: 0,
-          ultima_salida_fecha: '2022-12-01T00:00:00',
-          ultima_salida_cantidad: 0,
-          stock_minimo: 1,
-          notas: 'Requiere revisión eléctrica. Programar mantenimiento.',
-          creado_en: '2022-11-15T09:30:00',
-          actualizado_en: '2024-05-10T14:45:00',
-        },
-        {
-          id: 3,
-          repuesto_id: 'SN-1003',
-          nombre_repuesto: "Mega Jackpot 5",
-          cantidad: 1,
-          ubicacion_almacen: 'Sala C2',
-          ultima_entrada_fecha: '2024-01-10T00:00:00',
-          ultima_entrada_cantidad: 0,
-          ultima_salida_fecha: '2024-01-15T00:00:00',
-          ultima_salida_cantidad: 0,
-          stock_minimo: 1,
-          notas: 'Último mantenimiento programado para el 2024-07-20.',
-          creado_en: '2023-12-30T11:00:00',
-          actualizado_en: '2024-06-25T16:00:00',
-        }
-      ];
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:4000/api/inventario', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        });
 
-      setInventario(datosEjemplo);
-    } catch (err) {
-      console.error("Error al cargar inventario:", err);
-      setError("Error al cargar el inventario. Inténtalo de nuevo más tarde.");
-    }
+        const data = await response.json();
+        console.log('Response status:', data);
+        setInventario(data);
+      } catch (error) {
+        console.error('Error al obtener datos de máquinas:', error);
+      }
+    };
+
+    fetchData();
   }, []);
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex justify-center items-center bg-gray-100 text-red-600 text-xl">
-        Error: {error}
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-800 p-6 sm:p-10">

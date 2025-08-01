@@ -22,18 +22,17 @@ export default function Inventario() {
 
   return (
     // Main container: light background, dark text
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 text-gray-800 p-6 sm:p-10">
+    <div className="h-screen flex flex-col items-center justify-center bg-gray-100 text-gray-800 p-6 sm:p-10">
       <h1 className="text-4xl sm:text-5xl font-extrabold text-blue-700 mb-12 drop-shadow-sm">
         Gestión de Inventario 
-
       </h1>
 
       {/* Grid of action buttons/cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 w-full max-w-6xl">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
         {/* Card: Ver Inventario */}
         <button
           className="flex flex-col items-center justify-center p-8 bg-white rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-2 border border-gray-200 hover:border-blue-500 transition-all duration-300 group"
-          onClick={() => router.push('/inventario/verInventario')}
+          onClick={() => router.push('/admin/inventario/verInventario')}
         >
           <img src="/inventario.jpg" alt="Inventario" className="w-40 h-40 object-cover rounded-lg mb-4 group-hover:scale-105 transition-transform duration-300" />
           <span className="text-xl font-semibold text-gray-800 group-hover:text-blue-600 transition-colors duration-300">Ver Inventario</span>
@@ -48,19 +47,10 @@ export default function Inventario() {
           <span className="text-xl font-semibold text-gray-800 group-hover:text-green-600 transition-colors duration-300">Registrar Inventario</span>
         </button>
 
-        {/* Card: Ver Dashboard */}
-        <button
-          className="flex flex-col items-center justify-center p-8 bg-white rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-2 border border-gray-200 hover:border-purple-500 transition-all duration-300 group"
-          onClick={() => router.push('/inventario/dashAdmin')}
-        >
-          <img src="/dashboard.jpg" alt="Dashboard" className="w-40 h-40 object-cover rounded-lg mb-4 group-hover:scale-105 transition-transform duration-300" />
-          <span className="text-xl font-semibold text-gray-800 group-hover:text-purple-600 transition-colors duration-300">Ver Dashboard</span>
-        </button>
-
         {/* Card: Ver Repuestos */}
         <button
           className="flex flex-col items-center justify-center p-8 bg-white rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-2 border border-gray-200 hover:border-orange-500 transition-all duration-300 group"
-          onClick={() => router.push('/inventario/verRepuestos')}
+          onClick={() => router.push('/admin/inventario/verRepuestos')}
         >
           <img src="/repuesto.jpg" alt="Repuestos" className="w-40 h-40 object-cover rounded-lg mb-4 group-hover:scale-105 transition-transform duration-300" />
           <span className="text-xl font-semibold text-gray-800 group-hover:text-orange-600 transition-colors duration-300">Ver Repuestos</span>

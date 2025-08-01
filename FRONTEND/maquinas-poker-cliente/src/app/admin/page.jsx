@@ -1,33 +1,67 @@
 'use client';
 import { useState, useEffect } from "react";
 
-const maintenanceSchedule = [
-  { id: 1, machine: "PKR-003", type: "Preventivo", date: "2024-01-29", technician: "Juan Pérez" },
-  { id: 2, machine: "PKR-001", type: "Limpieza", date: "2024-01-30", technician: "María García" },
-  { id: 3, machine: "PKR-004", type: "Preventivo", date: "2024-02-01", technician: "Carlos López" },
-];
-
 export default function AdminDashboard() {
   const [selectedTab, setSelectedTab] = useState("overview");
   const [machineData, setMachineData] = useState([]);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:4000/api/maquinas/list', {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-        });
+  const operationalMachines = machineData.filter((m) => m.estado === "Operativo").length;
+  const alerts = machineData.filter((m) => m.estado === "Error" || m.estado === "Advertencia" || m.estado === "En Mantenimiento");
+  const totalMachines = machineData.length;
+  const ahora = new Date();
+  const hace30Dias = new Date();
+  hace30Dias.setDate(ahora.getDate() - 30);
+  const en7dias = new Date();
+  en7dias.setDate(ahora.getDate() + 7);
 
-        const data = await response.json();
-        console.log('Response status:', data);
-        setMachineData(data);
-      } catch (error) {
-        console.error('Error al obtener datos de máquinas:', error);
-      }
-    };
+  const maintenanceSchedule = machineData.filter(item => {
+  const fechaMantenimiento = new Date(item.proximo_mantenimiento);
+  return fechaMantenimiento >= ahora && fechaMantenimiento <= en7dias;
+  });
 
-    fetchData();
-  }, []);
+  const sumaTiemposActivos = machineData.reduce((acc, m) => {
+    const fechaInicio = new Date(m.fecha_instalacion);
+    const fechaFin = new Date(m.actualizado_en); 
+
+    const desde = fechaInicio > hace30Dias ? fechaInicio : hace30Dias;
+    const hasta = fechaFin < ahora ? fechaFin : ahora;
+
+    const diffMs = hasta - desde;
+    const diffDias = diffMs > 0 ? diffMs / (1000 * 60 * 60 * 24) : 0;
+
+    return acc + Math.floor(diffDias);
+  }, 0);
+  const averageUptime = sumaTiemposActivos / totalMachines
+
+  const handleISODate = (dateString) => {
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    const [year, month, day] = new Date(dateString).toLocaleDateString('en-US', options).split('/');
+    return `${year}-${month}-${day}`;
+  };
+
+  const handleUptime = (fecha_instalacion, actualizado_en) => {
+    const fechaInicio = new Date(fecha_instalacion);
+    const fechaFin = new Date(actualizado_en);
+    const diffMs = fechaFin - fechaInicio;
+    const diffDias = diffMs > 0 ? diffMs / (1000 * 60 * 60 * 24) : 0;
+    const diffMeses = Math.floor(diffDias / 30);
+    const diffAnios = Math.floor(diffDias / 365);
+
+    if (diffAnios > 0) {
+      return diffAnios + " años";
+    } else if (diffMeses > 0) {
+      return diffMeses + " meses";
+    }
+
+    return Math.floor(diffDias) + " días";
+  };
+
+  const handleTimeOffline = (actualizado_en) => {
+    const fechaFin = new Date();
+    const fechaInicio = new Date(actualizado_en);
+    const diffMs = fechaFin - fechaInicio;
+    const diffDias = diffMs > 0 ? diffMs / (1000 * 60 * 60 * 24) : 0;
+    return Math.floor(diffDias);
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -59,27 +93,24 @@ export default function AdminDashboard() {
     }
   }
 
-  const operationalMachines = machineData.filter((m) => m.estado === "Operativo").length;
-  const alerts = machineData.filter((m) => m.estado === "Error" || m.estado === "Advertencia");
-  const totalMachines = machineData.length;
-  const ahora = new Date();
-  const hace30Dias = new Date();
-  hace30Dias.setDate(ahora.getDate() - 30);
-  const hace7Dias = new Date();
-  hace7Dias.setDate(ahora.getDate() - 7);
-  const sumaTiemposActivos = machineData.reduce((acc, m) => {
-    const fechaInicio = new Date(m.fecha_instalacion);
-    const fechaFin = new Date(m.actualizado_en); 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:4000/api/inventario/maquinas/list', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        });
 
-    const desde = fechaInicio > hace30Dias ? fechaInicio : hace30Dias;
-    const hasta = fechaFin < ahora ? fechaFin : ahora;
+        const data = await response.json();
+        console.log('Response status:', data);
+        setMachineData(data);
+      } catch (error) {
+        console.error('Error al obtener datos de máquinas:', error);
+      }
+    };
 
-    const diffMs = hasta - desde;
-    const diffDias = diffMs > 0 ? diffMs / (1000 * 60 * 60 * 24) : 0;
-
-    return acc + diffDias;
-  }, 0);
-  const averageUptime = sumaTiemposActivos / totalMachines
+    fetchData();
+  }, []);
 
   return (
 
@@ -273,8 +304,8 @@ export default function AdminDashboard() {
                               className={`bi ${getStatusIcon(machine.estado)} text-${getStatusColor(machine.estado)} me-3`}
                             ></i>
                             <div>
-                              <div className="fw-medium">{machine.nombre}</div>
-                              <small className="text-muted">{machine.ultima_ubicacion_id}</small>
+                              <div className="fw-medium">{machine.numero_serie}</div>
+                              <small className="text-muted">{machine.notas}</small>
                             </div>
                           </div>
                           <div className="d-flex align-items-center">
@@ -285,14 +316,11 @@ export default function AdminDashboard() {
                               {machine.estado === "Error" && "Error"}
                             </span>
                             <div className="text-end me-3">
-                              <div className="small fw-medium">{machine.uptime}% uptime</div>
+                              <div className="small fw-medium">{handleUptime(machine.fecha_instalacion, machine.actualizado_en)} Activo</div>
                               <div className="text-muted" style={{ fontSize: "0.75rem" }}>
-                                Último: {machine.lastMaintenance}
+                                Último: {handleISODate(machine.ultimo_mantenimiento)}
                               </div>
                             </div>
-                            <button className="btn btn-outline-secondary btn-sm">
-                              <i className="bi bi-tools"></i>
-                            </button>
                           </div>
                         </div>
                       ))}
@@ -304,7 +332,7 @@ export default function AdminDashboard() {
                 {selectedTab === "maintenance" && (
                   <div className="card">
                     <div className="card-header">
-                      <h5 className="card-title mb-0">Programación de Mantenimiento</h5>
+                      <h5 className="card-title mb-0">Mantenimientos Programados</h5>
                       <small className="text-muted">Próximos mantenimientos programados</small>
                     </div>
                     <div className="card-body">
@@ -331,10 +359,6 @@ export default function AdminDashboard() {
                           </div>
                         </div>
                       ))}
-                      <button className="btn btn-primary w-100 mt-3">
-                        <i className="bi bi-calendar-plus me-2"></i>
-                        Programar Nuevo Mantenimiento
-                      </button>
                     </div>
                   </div>
                 )}
@@ -358,12 +382,11 @@ export default function AdminDashboard() {
                           </div>
                           <div className="flex-grow-1">
                             <div className="d-flex justify-content-between align-items-center">
-                              <div className="fw-medium">{alert.machine}</div>
-                              <small className="text-muted">{alert.time}</small>
+                              <div className="fw-medium">{alert.numero_serie}</div>
+                              <small className="text-muted">Hace {handleTimeOffline(alert.actualizado_en)} días</small>
                             </div>
-                            <div className="text-muted small mt-1">{alert.message}</div>
+                            <div className="text-muted small mt-1">{alert.notas}</div>
                           </div>
-                          <button className="btn btn-outline-success btn-sm ms-3">Resolver</button>
                         </div>
                       ))}
                     </div>

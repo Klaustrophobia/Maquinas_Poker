@@ -1,15 +1,17 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { findUserByNombreRepository, createUserRepository, findUserByEmailRepository } from '@/repositories/user.repository';
+import { findUserByNombreRepository, createUserRepository, findUserByEmailRepository, updateUltimoLoginRepository } from '@/repositories/user.repository';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'clave_secreta_maquinas_poker';
 
-export async function loginUserService(nombre: string, password: string) {
-  const user = await findUserByNombreRepository(nombre);
+export async function loginUserService(email: string, password: string) {
+  const user = await findUserByEmailRepository(email);
   if (!user) return { error: 'Usuario no encontrado' };
     // console.log("UsuarioService", nombre, password, user);
-  const contraseñaValida = await bcrypt.compare(password, user.password_hash);
+  const contraseñaValida = password === user.password_hash;
   if (!contraseñaValida) return { error: 'Contraseña inválida' };
+
+  updateUltimoLoginRepository(user.id);
 
     const token = jwt.sign({ id: user.id, rol: user.rol }, JWT_SECRET, {
       expiresIn: '4h',

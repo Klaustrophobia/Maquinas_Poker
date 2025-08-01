@@ -1,7 +1,7 @@
 // import { connectDB } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 // importamos la conexion de TypeORM y la entidad
-import { getDataSource } from '@/data-source';
+import { getDataSource } from '@/lib/data-source';
 import { Maquina } from '@/entity/Maquina';
 import { corsHeaders, handlePreflight } from '@/lib/cors';
 
