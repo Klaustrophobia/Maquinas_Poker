@@ -6,84 +6,27 @@ import { useRouter } from "next/navigation";
 export default function VerRepuestos() {
   const router = useRouter();
   const [repuestos, setRepuestos] = useState([]);
-  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    setError(null);
-    const fakeData = [
-      {
-        id: 1,
-        nombre: "Motor A123",
-        codigo: "A123",
-        descripcion: "Motor para modelo X de alta potencia y eficiencia.",
-        proveedor_id: 101,
-        proveedor_nombre: "Proveedora Industrial S.A.",
-        precio_unitario: 250.75,
-        stock_actual: 10,
-        stock_minimo: 5,
-        ubicacion_almacen: "Estante B-12",
-        compatible_con: "Modelo X, Modelo Y (Serie 2000)",
-        fecha_ultimo_reabastecimiento: "2025-07-01",
-      },
-      {
-        id: 2,
-        nombre: "Filtro XYZ",
-        codigo: "F987",
-        descripcion: "Filtro de aire de alto flujo para maquinaria pesada.",
-        proveedor_id: 102,
-        proveedor_nombre: "Suministros del Norte",
-        precio_unitario: 95.0,
-        stock_actual: 3,
-        stock_minimo: 10,
-        ubicacion_almacen: "Zona Almacenaje Frío, Sec. D",
-        compatible_con: "Modelo Z (todas las versiones)",
-        fecha_ultimo_reabastecimiento: "2025-06-15",
-      },
-      {
-        id: 3,
-        nombre: "Kit de Embrague E-500",
-        codigo: "KE-500",
-        descripcion: "Kit completo de embrague con componentes reforzados.",
-        proveedor_id: 101,
-        proveedor_nombre: "Proveedora Industrial S.A.",
-        precio_unitario: 320.5,
-        stock_actual: 8,
-        stock_minimo: 3,
-        ubicacion_almacen: "Sección Motor, Estante 3",
-        compatible_con: "Vehículos Comerciales (varios modelos)",
-        fecha_ultimo_reabastecimiento: "2025-06-25",
-      },
-      {
-        id: 4,
-        nombre: "Batería Industrial 12V",
-        codigo: "BAT-IND-12",
-        descripcion: "Batería de ciclo profundo para equipos industriales.",
-        proveedor_id: 103,
-        proveedor_nombre: "Energía Total",
-        precio_unitario: 180.0,
-        stock_actual: 2,
-        stock_minimo: 5,
-        ubicacion_almacen: "Área de Baterías, Jaula 1",
-        compatible_con: "Montacargas, Generadores pequeños",
-        fecha_ultimo_reabastecimiento: "2025-07-05",
-      },
-      {
-        id: 5,
-        nombre: "Válvula de Presión V-01",
-        codigo: "VALV-01",
-        descripcion: "Válvula de alivio de presión ajustable.",
-        proveedor_id: 104,
-        proveedor_nombre: "HidroComponentes",
-        precio_unitario: 75.2,
-        stock_actual: 15,
-        stock_minimo: 7,
-        ubicacion_almacen: "Cajón Hidráulico 4",
-        compatible_con: "Sistemas hidráulicos generales",
-        fecha_ultimo_reabastecimiento: "2025-06-10",
-      },
-    ];
-    setRepuestos(fakeData);
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:4000/api/inventario/repuesto', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        const data = await response.json();
+        if (data.length > 0) {
+        setRepuestos(data);
+        console.log('Datos de repuestos obtenidos:', data);
+        }
+      } catch (error) {
+        console.error('Error al obtener datos de repuestos:', error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const filteredRepuestos = useMemo(() => {
@@ -95,20 +38,12 @@ export default function VerRepuestos() {
     });
   }, [searchTerm, repuestos]);
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-red-100 text-red-700 text-xl">
-        Error: {error}
-      </div>
-    );
-  }
-
   const columnas = [
     { label: "ID", key: "id" },
     { label: "Nombre", key: "nombre" },
     { label: "Código", key: "codigo" },
     { label: "Descripción", key: "descripcion", truncate: true },
-    { label: "Proveedor", key: "proveedor_nombre" },
+    { label: "Proveedor", key: "proveedor.nombre" },
     {
       label: "Precio Unitario",
       key: "precio_unitario",
@@ -116,7 +51,7 @@ export default function VerRepuestos() {
     },
     { label: "Stock Actual", key: "stock_actual" },
     { label: "Stock Mínimo", key: "stock_minimo" },
-    { label: "Ubicación", key: "ubicacion_almacen" },
+    { label: "Ubicación", key: "ubicacion_id" },
     { label: "Compatible con", key: "compatible_con", truncate: true },
     {
       label: "Últ. Reabastecimiento",
@@ -180,7 +115,7 @@ export default function VerRepuestos() {
                   {filteredRepuestos.map((r) => (
                     <tr key={r.id} className="hover:bg-blue-50 transition">
                       {columnas.map((col, idx) => {
-                        const valor = r[col.key] ?? "N/A";
+                        const valor = col.key.split('.').reduce((acc, k) => acc?.[k], r) ?? "N/A";
                         const contenido = col.format ? col.format(valor) : valor;
                         return (
                           <td

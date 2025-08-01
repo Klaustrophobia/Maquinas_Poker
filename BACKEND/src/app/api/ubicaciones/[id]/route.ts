@@ -6,11 +6,12 @@ export async function OPTIONS() {
   return handlePreflight();
 }
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params;
+    const params = await context.params;
+  const id = Number(params.id);
 
-    const result = await getItemUbicacionController(Number(id));
+    const result = await getItemUbicacionController(id);
     
     if (result.error) {
       return new NextResponse(JSON.stringify({ error: result.error }), {

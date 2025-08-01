@@ -9,7 +9,7 @@ export const RepuestoController = {
     try {
       const data = await RepuestoService.getRepuestos(id ? Number(id) : undefined);
       if (!data) return NextResponse.json({ error: 'Repuesto no encontrado' }, { status: 404 });
-      return NextResponse.json(data);
+      return data;
     } catch (error) {
       return NextResponse.json({ error: (error as Error).message }, { status: 500 });
     }

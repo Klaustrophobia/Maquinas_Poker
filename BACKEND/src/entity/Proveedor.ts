@@ -18,9 +18,6 @@ export class Proveedor {
     email!: string;
 
     @Column({ nullable: true })
-    direccion!: string;
-
-    @Column({ nullable: true })
     rtn!: string;
 
     @Column({ nullable: true })

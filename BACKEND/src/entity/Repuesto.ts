@@ -19,11 +19,17 @@ export class Repuesto {
     @JoinColumn({ name: 'proveedor_id' })
     proveedor!: Proveedor;
 
+    @Column({ type: 'int', nullable: true })
+    stock_actual!: number;
+
+    @Column({ type: 'int', nullable: true })
+    stock_minimo!: number;
+
     @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
     precio_unitario!: number;
 
     @Column({ nullable: true })
-    ubicacion_almacen!: string;
+    ubicacion_id!: string;
 
     @Column({ nullable: true })
     compatible_con!: string;
