@@ -11,15 +11,17 @@ export default function UsuariosPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [filterRol, setFilterRol] = useState("")
   const [filterActivo, setFilterActivo] = useState("")
-  const [loading, setLoading] = useState(true)
+  const [loadingData, setLoadingData] = useState(true)
   const [isLogging, setIsLogging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
+  const [isLoggingDelete, setIsLoggingDelete] = useState(false);
 
   const [formData, setFormData] = useState({
     nombre: "",
     email: "",
     password: "",
-    rol: "operador",
+    rol: "cliente",
     activo: true,
     telefono: "",
     mfa_secret: "",
@@ -43,22 +45,42 @@ export default function UsuariosPage() {
 
     if (editingUser) {
       // Actualizar usuario existente
-      setUsuarios(
-        usuarios.map((user) =>
-          user.id === editingUser.id
-            ? {
-                ...user,
-                nombre: formData.nombre,
-                email: formData.email,
-                rol: formData.rol,
-                activo: formData.activo,
-                telefono: formData.telefono,
-                mfa_secret: formData.mfa_secret || null,
-                fecha_actualizacion: new Date().toISOString().slice(0, 19).replace("T", " "),
-              }
-            : user,
-        ),
-      )
+      const modifyusuario = {
+        nombre: formData.nombre,
+        email: formData.email,
+        password: formData.password,
+        rol: formData.rol,
+        telefono: formData.telefono,
+        activo: formData.activo,
+        mfa_secret: formData.mfa_secret || null,
+      }
+
+      try {
+        const response = await fetch('http://localhost:4000/api/usuarios', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({
+            id: editingUser.id,
+            userData: modifyusuario
+          })
+        });
+
+        if (response.ok) {
+          setIsLogging(true);
+          setShowModal(false);
+          setUsuarios(usuarios.map((user) =>
+            user.id === editingUser.id ? { ...user, ...modifyusuario } : user
+          ));
+        } else {
+          console.error('Error al crear la máquina:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error al crear la máquina:', error);
+      } finally {
+        resetForm()
+        setIsLoading(false);
+        setIsLogging(false);
+      }
 
 
     } else {
@@ -111,7 +133,7 @@ export default function UsuariosPage() {
   }
 
   const handleDelete = async (id) => {
-    setIsLoading(true);
+    setIsLoadingDelete(true);
     if (confirm("¿Estás seguro de que quieres eliminar este usuario?")) {
       try {
         const response = await fetch(`http://localhost:4000/api/usuarios`, {
@@ -121,6 +143,7 @@ export default function UsuariosPage() {
         });
 
         if (response.ok) {
+          setIsLoggingDelete(true);
           setUsuarios(usuarios.filter((user) => user.id !== id));
         } else {
           console.error('Error al eliminar el usuario:', response.statusText);
@@ -128,8 +151,8 @@ export default function UsuariosPage() {
       } catch (error) {
         console.error('Error al eliminar el usuario:', error);
       } finally {
-        setIsLoading(false);
-        setIsLogging(true);
+        setIsLoadingDelete(false);
+        setIsLoggingDelete(false);
       }
     }
     setIsLogging(false);
@@ -166,14 +189,14 @@ export default function UsuariosPage() {
         } catch (error) {
           console.error('Error al obtener datos de usuarios:', error);
         } finally {
-          setLoading(false);
+          setLoadingData(false);
         }
       };
   
       fetchData();
     }, []);
 
-  if (loading) {
+  if (loadingData) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p>Cargando...</p>
@@ -306,11 +329,11 @@ export default function UsuariosPage() {
                                   className="btn btn-sm btn-outline-danger"
                                   onClick={() => handleDelete(usuario.id)}
                                 >
-                                  {isLoading ? (
+                                  {isLoadingDelete ? (
                                     <div className="spinner-border" role="status">
                                       <span className="visually-hidden">Loading...</span>
                                     </div>
-                                  ) : isLogging ? (
+                                  ) : isLoggingDelete ? (
                                     <i className="bi bi-check-all"></i>
                                   ) : (
                                     <i className="bi bi-trash"></i>

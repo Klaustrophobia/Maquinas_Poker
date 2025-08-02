@@ -33,7 +33,10 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: result.error }, { status: 404 });
   }
 
-  return NextResponse.json({message: 'Usuario actualizado exitosamente', user: result}, { status: 200 });
+  return new NextResponse(JSON.stringify(result), {
+    status: 200,
+    headers: corsHeaders
+  });
 }
 
 export async function DELETE(req: NextRequest) {

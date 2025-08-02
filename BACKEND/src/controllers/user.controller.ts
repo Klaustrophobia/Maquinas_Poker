@@ -17,21 +17,24 @@ export async function updateUserController(id: number, body: {
     rol: string;
     telefono?: string;
     activo?: boolean;
+    mfa_secret?: string;
 }) {
-    const { nombre, email, password, rol, telefono, activo } = body;
+    const { nombre, email, password, rol, telefono, activo, mfa_secret } = body;
 
-    if (!nombre && !email && !password && !rol && !telefono && activo === undefined) {
+    if (!nombre && !email && !password && !rol && !telefono && activo === undefined && !mfa_secret) {
         return { error: 'No se proporcionaron datos para actualizar el usuario' }
     }
 
     const userData: Partial<User> = {};
     if (nombre) userData.nombre = nombre;
     if (email) userData.email = email;
-    if (password) userData.password_hash = await bcrypt.hash(password, 10);
+    if (password) userData.password_hash = password;
     if (rol) userData.rol = rol;
     if (telefono) userData.telefono = telefono;
     if (activo !== undefined) userData.activo = activo;
+    if (mfa_secret) userData.mfa_secret = mfa_secret;
     userData.fecha_actualizacion = new Date();
+    userData.fecha_creacion = new Date();
 
     const updatedUser = await updateUserService(id, userData);
     if (!updatedUser) {

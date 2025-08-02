@@ -11,14 +11,7 @@ export async function updateUserService(id: number, userData: Partial<User>) {
     if (!updatedUser) {
         return { error: 'No se pudo actualizar el usuario' };
     }
-    return {
-        id: updatedUser.id,
-        nombre: updatedUser.nombre,
-        email: updatedUser.email,
-        rol: updatedUser.rol,
-        telefono: updatedUser.telefono,
-        activo: updatedUser.activo
-    };
+    return updatedUser;
 }
 
 export async function deleteUserService(id: number) {
