@@ -4,7 +4,7 @@ import { FinanzaService } from '@/services/finanza.service';
 export const FinanzaController = {
   
 
-   async get(_: NextRequest) {
+   async get(_req: NextRequest) {
     try {
       const data = await FinanzaService.getFinanzas();
       return NextResponse.json(data);
