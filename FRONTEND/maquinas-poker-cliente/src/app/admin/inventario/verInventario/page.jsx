@@ -1,10 +1,10 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import UbicacionNombre from '../../../../components/ubicacion/ubicacion-nombre'
 
 export default function VerInventario() {
   const [inventario, setInventario] = useState([]);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -19,11 +19,21 @@ export default function VerInventario() {
         setInventario(data);
       } catch (error) {
         console.error('Error al obtener datos de máquinas:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Cargando...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-800 p-6 sm:p-10">
@@ -65,7 +75,10 @@ export default function VerInventario() {
 
               <p className="text-gray-700"><span className="font-semibold text-gray-600">ID Artículo:</span> {item.id}</p>
               <p className="text-gray-700"><span className="font-semibold text-gray-600">Cantidad:</span> {item.cantidad}</p>
-              <UbicacionNombre item={item} />
+              <p className="text-gray-700">
+                <span className="font-semibold text-gray-600">Ubicación:</span>{' '}
+                {item.ubicacion.nombre || 'Cargando...'}
+              </p>
               <p className="text-gray-700"><span className="font-semibold text-gray-600">Stock Mínimo:</span> {item.stock}</p>
 
               <div className="mt-4 border-t border-gray-200 pt-3 text-sm text-gray-600">

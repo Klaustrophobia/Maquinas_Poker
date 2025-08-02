@@ -119,7 +119,7 @@ export default function Inventario() {
           onClick={() => setShowModal(true)}
         >
           <img src="/maquinascrear.jpg" alt="Crear Registro" className="w-40 h-40 object-cover rounded-lg mb-4 group-hover:scale-105 transition-transform duration-300" />
-          <span className="text-xl font-semibold text-gray-800 group-hover:text-green-600 transition-colors duration-300">Registrar Inventario</span>
+          <span className="text-xl font-semibold text-gray-800 group-hover:text-green-600 transition-colors duration-300">Registrar Máquina</span>
         </button>
 
         {/* Card: Ver Repuestos */}

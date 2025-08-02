@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Proveedor } from './Proveedor';
+import { Ubicacion } from './Ubicacion';
 
 @Entity('repuestos')
 export class Repuesto {
@@ -28,8 +29,9 @@ export class Repuesto {
     @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
     precio_unitario!: number;
 
-    @Column({ nullable: true })
-    ubicacion_id!: string;
+    @ManyToOne(() => Ubicacion)
+    @JoinColumn({ name: 'ubicacion_id' })
+    ubicacion!: Ubicacion;
 
     @Column({ nullable: true })
     compatible_con!: string;

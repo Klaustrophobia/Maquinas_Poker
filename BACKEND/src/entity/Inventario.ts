@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Repuesto } from './Repuesto';
+import { Ubicacion } from './Ubicacion';
 
 @Entity('inventarios')
 export class Inventario {
@@ -13,8 +14,9 @@ export class Inventario {
   @Column({ nullable: false })
   cantidad!: number;
 
-  @Column({ unique: true, nullable: true })
-  ubicacion_id!: string;
+  @ManyToOne(() => Ubicacion)
+    @JoinColumn({ name: 'ubicacion_id' })
+  ubicacion!: Ubicacion;
 
   @Column({ type: 'datetime', nullable: true })
   ultima_entrada_fecha!: Date;

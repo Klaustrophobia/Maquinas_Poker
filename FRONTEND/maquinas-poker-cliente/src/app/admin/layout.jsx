@@ -37,7 +37,7 @@ export default function AdminLayout({ children }) {
               <a href="/admin/inventario" className="text-decoration-none">
                 Inventario
               </a>
-              <a href="/usuarios" className="text-decoration-none">
+              {/* <a href="/usuarios" className="text-decoration-none">
                 Gestión de Usuarios
               </a>
               <a href="/reportes" className="text-decoration-none">
@@ -45,8 +45,8 @@ export default function AdminLayout({ children }) {
               </a>
               <a href="/configuracion" className="text-decoration-none">
                 Configuración
-              </a>
-              <button className="btn btn-danger" onClick={signOut}>
+              </a> */}
+              <button className="btn btn-danger" onClick={() => signOut({ callbackUrl: '/' })}>
                 Cerrar Sesión
               </button>
             </nav>

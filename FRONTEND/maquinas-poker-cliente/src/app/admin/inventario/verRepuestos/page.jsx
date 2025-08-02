@@ -7,6 +7,7 @@ export default function VerRepuestos() {
   const router = useRouter();
   const [repuestos, setRepuestos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,6 +24,8 @@ export default function VerRepuestos() {
         }
       } catch (error) {
         console.error('Error al obtener datos de repuestos:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -51,7 +54,7 @@ export default function VerRepuestos() {
     },
     { label: "Stock Actual", key: "stock_actual" },
     { label: "Stock Mínimo", key: "stock_minimo" },
-    { label: "Ubicación", key: "ubicacion_id" },
+    { label: "Ubicación", key: "ubicacion.nombre" },
     { label: "Compatible con", key: "compatible_con", truncate: true },
     {
       label: "Últ. Reabastecimiento",
@@ -64,6 +67,14 @@ export default function VerRepuestos() {
         }),
     },
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Cargando...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-800 p-6 sm:p-10">

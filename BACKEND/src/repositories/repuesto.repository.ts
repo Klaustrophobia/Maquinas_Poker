@@ -4,12 +4,12 @@ import { Repuesto } from '@/entity/Repuesto';
 export const RepuestoRepository = {
   async findAll() {
     const db = await getDataSource();
-    return db.getRepository(Repuesto).find({ relations: ['proveedor'] });
+    return db.getRepository(Repuesto).find({ relations: ['proveedor', 'ubicacion'] });
   },
 
   async findById(id: number) {
     const db = await getDataSource();
-    return db.getRepository(Repuesto).findOne({ where: { id }, relations: ['proveedor'] });
+    return db.getRepository(Repuesto).findOne({ where: { id }, relations: ['proveedor', 'ubicacion'] });
   },
 
   async create(repuesto: Repuesto) {

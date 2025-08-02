@@ -96,7 +96,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:4000/api/inventario/maquinas/list', {
+        const response = await fetch('http://localhost:4000/api/inventario/maquinas', {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
         });
@@ -316,7 +316,7 @@ export default function AdminDashboard() {
                               {machine.estado === "Error" && "Error"}
                             </span>
                             <div className="text-end me-3">
-                              <div className="small fw-medium">{handleUptime(machine.fecha_instalacion, machine.actualizado_en)} Activo</div>
+                              <div className="small fw-medium">{handleUptime(machine.fecha_instalacion, machine.actualizado_en)} Activa</div>
                               <div className="text-muted" style={{ fontSize: "0.75rem" }}>
                                 Último: {handleISODate(machine.ultimo_mantenimiento)}
                               </div>
@@ -344,18 +344,17 @@ export default function AdminDashboard() {
                           <div className="d-flex align-items-center">
                             <i className="bi bi-calendar text-primary me-3 fs-5"></i>
                             <div>
-                              <div className="fw-medium">{maintenance.machine}</div>
-                              <small className="text-muted">{maintenance.type}</small>
+                              <div className="fw-medium">{maintenance.numero_serie}</div>
+                              <small className="text-muted">Preventivo</small>
                             </div>
                           </div>
                           <div className="d-flex align-items-center">
                             <div className="text-end me-3">
-                              <div className="small fw-medium">{maintenance.date}</div>
+                              <div className="small fw-medium">{handleISODate(maintenance.proximo_mantenimiento)}</div>
                               <div className="text-muted" style={{ fontSize: "0.75rem" }}>
-                                {maintenance.technician}
+                                {maintenance.proveedor.nombre}
                               </div>
                             </div>
-                            <button className="btn btn-outline-primary btn-sm">Editar</button>
                           </div>
                         </div>
                       ))}

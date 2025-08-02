@@ -3,7 +3,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDataSource } from '@/lib/data-source';
 import { Inventario } from '@/entity/Inventario';
 import { Repuesto } from '@/entity/Repuesto';
+import { Ubicacion } from '@/entity/Ubicacion';
 import { corsHeaders, handlePreflight } from '@/lib/cors';
+import { InventarioController } from '@/controllers/inventario.controller';
 
 export async function OPTIONS() {
   return handlePreflight();
@@ -12,29 +14,11 @@ export async function OPTIONS() {
 export async function GET(req: NextRequest) {
   // const auth = await authenticateRole(['admin', 'tecnico'])(req);
   // if (auth) return auth;
-
-  try {
-    const db = await getDataSource();
-    const inventarioRepository = db.getRepository(Inventario);
-    const result = await inventarioRepository.find();
+  const result = await InventarioController.get(req);
     return new NextResponse(JSON.stringify(result), {
       status: 200,
-      headers: corsHeaders,
+      headers: corsHeaders
     });
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error('Error al obtener inventario:', error.message);
-      return NextResponse.json(
-        { error: `Error al obtener inventario: ${error.message}` },
-        { status: 500 }
-      );
-    }
-    console.error('Error desconocido al obtener inventario:', error);
-    return NextResponse.json(
-      { error: 'Error desconocido al obtener inventario' },
-      { status: 500 }
-    );
-  }
 }
 
 export async function POST(req: NextRequest) {
@@ -62,16 +46,22 @@ export async function POST(req: NextRequest) {
     const db = await getDataSource();
     const inventarioRepository = db.getRepository(Inventario);
     const repuestoRepository = db.getRepository(Repuesto);
+    const ubicacionRepository = db.getRepository(Ubicacion);
 
     const repuesto = await repuestoRepository.findOneBy({ id: repuesto_id });
     if (!repuesto) {
       return NextResponse.json({ error: 'Repuesto no encontrado' }, { status: 404 });
     }
 
+    const ubicacion = await ubicacionRepository.findOneBy({ id: ubicacion_id });
+    if (!ubicacion) {
+      return NextResponse.json({ error: 'Ubicación no encontrada' }, { status: 404 });
+    }
+
     const nuevoInventario = inventarioRepository.create({
       repuesto,
       cantidad,
-      ubicacion_id,
+      ubicacion,
       ultima_entrada_fecha: new Date(ultima_entrada_fecha),
       ultima_entrada_cantidad,
       ultima_salida_fecha: new Date(ultima_salida_fecha),

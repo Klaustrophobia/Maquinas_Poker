@@ -9,7 +9,7 @@ export const MaquinaController = {
     const data = await MaquinaService.getMaquinas(id ? Number(id) : undefined);
     if (!data) return NextResponse.json({ error: 'Máquina no encontrada' }, { status: 404 });
 
-    return NextResponse.json(data);
+    return data;
   },
 
   async post(req: NextRequest) {
