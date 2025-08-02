@@ -14,8 +14,6 @@ export default function UsuariosPage() {
   const [loadingData, setLoadingData] = useState(true)
   const [isLogging, setIsLogging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
-  const [isLoggingDelete, setIsLoggingDelete] = useState(false);
 
   const [formData, setFormData] = useState({
     nombre: "",
@@ -134,7 +132,6 @@ export default function UsuariosPage() {
   }
 
   const handleDelete = async (id) => {
-    setIsLoadingDelete(true);
     if (confirm("¿Estás seguro de que quieres eliminar este usuario?")) {
       try {
         const response = await fetch(`http://localhost:4000/api/usuarios`, {
@@ -144,19 +141,14 @@ export default function UsuariosPage() {
         });
 
         if (response.ok) {
-          setIsLoggingDelete(true);
           setUsuarios(usuarios.filter((user) => user.id !== id));
         } else {
           console.error('Error al eliminar el usuario:', response.statusText);
         }
       } catch (error) {
         console.error('Error al eliminar el usuario:', error);
-      } finally {
-        setIsLoadingDelete(false);
-        setIsLoggingDelete(false);
       }
     }
-    setIsLogging(false);
   }
 
   const resetForm = () => {
@@ -330,15 +322,7 @@ export default function UsuariosPage() {
                                   className="btn btn-sm btn-outline-danger"
                                   onClick={() => handleDelete(usuario.id)}
                                 >
-                                  {isLoadingDelete ? (
-                                    <div className="spinner-border" role="status">
-                                      <span className="visually-hidden">Loading...</span>
-                                    </div>
-                                  ) : isLoggingDelete ? (
-                                    <i className="bi bi-check-all"></i>
-                                  ) : (
-                                    <i className="bi bi-trash"></i>
-                                  )}
+                                  <i className="bi bi-trash"></i>
                                 </button>
                               </div>
                             </td>
