@@ -38,7 +38,6 @@ export default function LoginPage() {
       
       // El rol está dentro de session.user
       const rol = session?.user?.role || session?.user?.rol;
-      console.log('rol', rol);
 
       setIsLogging(true);
       

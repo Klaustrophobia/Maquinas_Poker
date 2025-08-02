@@ -24,7 +24,7 @@ export class User {
   activo!: boolean;
 
   @Column({ type: 'datetime', nullable: true })
-  ultimo_login!: Date;
+  ultimo_login?: Date | null;
 
   @Column({ nullable: true })
   mfa_secret!: string;

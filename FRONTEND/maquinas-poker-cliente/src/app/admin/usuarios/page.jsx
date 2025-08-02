@@ -1,54 +1,19 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 export default function UsuariosPage() {
-  const [usuarios, setUsuarios] = useState([
-    {
-      id: 1,
-      nombre: "Juan Pérez",
-      email: "juan@casino.com",
-      password_hash: "hashed_password_1",
-      rol: "administrador",
-      activo: true,
-      ultimo_login: "2024-01-28 10:30:00",
-      fecha_creacion: "2024-01-15 09:00:00",
-      fecha_actualizacion: "2024-01-28 10:30:00",
-      mfa_secret: "JBSWY3DPEHPK3PXP",
-      telefono: "+1234567890",
-    },
-    {
-      id: 2,
-      nombre: "María García",
-      email: "maria@casino.com",
-      password_hash: "hashed_password_2",
-      rol: "tecnico",
-      activo: true,
-      ultimo_login: "2024-01-27 14:15:00",
-      fecha_creacion: "2024-01-10 11:30:00",
-      fecha_actualizacion: "2024-01-27 14:15:00",
-      mfa_secret: null,
-      telefono: "+1234567891",
-    },
-    {
-      id: 3,
-      nombre: "Carlos López",
-      email: "carlos@casino.com",
-      password_hash: "hashed_password_3",
-      rol: "operador",
-      activo: false,
-      ultimo_login: "2024-01-20 16:45:00",
-      fecha_creacion: "2024-01-05 08:15:00",
-      fecha_actualizacion: "2024-01-25 12:00:00",
-      mfa_secret: null,
-      telefono: "+1234567892",
-    },
-  ])
-
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+  const [usuarios, setUsuarios] = useState([])
   const [showModal, setShowModal] = useState(false)
   const [editingUser, setEditingUser] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [filterRol, setFilterRol] = useState("")
   const [filterActivo, setFilterActivo] = useState("")
+  const [loading, setLoading] = useState(true)
+  const [isLogging, setIsLogging] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     nombre: "",
@@ -60,7 +25,7 @@ export default function UsuariosPage() {
     mfa_secret: "",
   })
 
-  const roles = ["administrador", "tecnico", "operador", "supervisor"]
+  const roles = ["admin", "cliente", "tecnico"]
 
   const filteredUsuarios = usuarios.filter((usuario) => {
     const matchesSearch =
@@ -72,8 +37,9 @@ export default function UsuariosPage() {
     return matchesSearch && matchesRol && matchesActivo
   })
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+    setIsLoading(true)
 
     if (editingUser) {
       // Actualizar usuario existente
@@ -93,26 +59,41 @@ export default function UsuariosPage() {
             : user,
         ),
       )
+
+
     } else {
       // Crear nuevo usuario
       const newUser = {
-        id: Math.max(...usuarios.map((u) => u.id)) + 1,
         nombre: formData.nombre,
         email: formData.email,
         password_hash: `hashed_${formData.password}`,
         rol: formData.rol,
         activo: formData.activo,
-        ultimo_login: null,
-        fecha_creacion: new Date().toISOString().slice(0, 19).replace("T", " "),
-        fecha_actualizacion: new Date().toISOString().slice(0, 19).replace("T", " "),
-        mfa_secret: formData.mfa_secret || null,
+        mfa_secret: formData.mfa_secret,
         telefono: formData.telefono,
       }
-      setUsuarios([...usuarios, newUser])
-    }
 
-    resetForm()
-    setShowModal(false)
+      try {
+      const response = await fetch('http://localhost:4000/api/usuarios/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(newUser)
+      });
+
+      if (response.ok) {
+        router.push('/admin/usuarios');
+      } else {
+        console.error('Error al crear la máquina:', response.statusText);
+      }
+     } catch (error) {
+      console.error('Error al crear la máquina:', error);
+     } finally {
+      resetForm()
+      setIsLoading(false);
+      setIsLogging(true);
+      setShowModal(false)
+     }
+    }
   }
 
   const handleEdit = (usuario) => {
@@ -151,6 +132,34 @@ export default function UsuariosPage() {
   const handleCloseModal = () => {
     setShowModal(false)
     resetForm()
+  }
+
+  useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await fetch('http://localhost:4000/api/usuarios', {
+              method: 'GET',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
+          });
+  
+          const data = await response.json();
+          setUsuarios(data);
+        } catch (error) {
+          console.error('Error al obtener datos de usuarios:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchData();
+    }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Cargando...</p>
+      </div>
+    );
   }
 
   return (
@@ -198,8 +207,8 @@ export default function UsuariosPage() {
                         onChange={(e) => setFilterActivo(e.target.value)}
                       >
                         <option value="">Todos los estados</option>
-                        <option value="true">Activos</option>
-                        <option value="false">Inactivos</option>
+                        <option value="1">Activos</option>
+                        <option value="0">Inactivos</option>
                       </select>
                     </div>
                     <div className="col-md-2">
@@ -241,9 +250,9 @@ export default function UsuariosPage() {
                             <td>
                               <span
                                 className={`badge ${
-                                  usuario.rol === "administrador"
+                                  usuario.rol === "admin"
                                     ? "bg-danger"
-                                    : usuario.rol === "supervisor"
+                                    : usuario.rol === "cliente"
                                       ? "bg-warning"
                                       : usuario.rol === "tecnico"
                                         ? "bg-info"
@@ -402,7 +411,16 @@ export default function UsuariosPage() {
                       Cancelar
                     </button>
                     <button type="submit" className="btn btn-primary">
-                      {editingUser ? "Actualizar" : "Crear"} Usuario
+                      {isLoading ? (
+                        <div className="spinner-border" role="status">
+                          <span className="visually-hidden">Loading...</span>
+                        </div>
+                      ) : isLogging ? (
+                        <i className="bi bi-check-all"></i>
+                      ) : (
+                        editingUser ? "Actualizar Usuario" : "Crear Usuario"
+                      )}
+                      
                     </button>
                   </div>
                 </form>

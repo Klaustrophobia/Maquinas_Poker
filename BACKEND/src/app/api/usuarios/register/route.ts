@@ -2,6 +2,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { registerController } from '@/controllers/auth.controller';
 import { authenticateRole } from '@/middleware/auth';
+import { corsHeaders, handlePreflight } from '@/lib/cors';
+
+export async function OPTIONS() {
+  return handlePreflight();
+}
 
 export async function POST(req: NextRequest) {
   // Autenticación de rol para permitir solo a 'admin' registrar usuarios
@@ -17,7 +22,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: result.error }, { status: 400 });
   }
 
-  return NextResponse.json({ message: 'Usuario registrado exitosamente', 
-    user: result.newUser,
-    token: result.token }, { status: 201 });
+  return new NextResponse(JSON.stringify(result), {
+  status: 200,
+  headers: corsHeaders
+});
 }

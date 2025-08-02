@@ -11,10 +11,10 @@ export async function GET(req: NextRequest) {
   const auth = await authenticateRole(['admin', 'tecnico'])(req);
   if (auth) return auth;
   const result = await MaquinaController.get(req);
-    return new NextResponse(JSON.stringify(result), {
-      status: 200,
-      headers: corsHeaders
-    });
+  return new NextResponse(JSON.stringify(result), {
+    status: 200,
+    headers: corsHeaders
+  });
 }
 
 export async function POST(req: NextRequest) {
