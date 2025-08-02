@@ -3,8 +3,8 @@ import { FinanzaService } from '@/services/finanza.service';
 
 export const FinanzaController = {
   
-
-   async get(_req: NextRequest) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+   async get(_req: Request) {
     try {
       const data = await FinanzaService.getFinanzas();
       return NextResponse.json(data);

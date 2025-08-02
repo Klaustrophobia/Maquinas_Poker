@@ -5,7 +5,7 @@ export const RepuestoService = {
   async getRepuestos(id?: number) {
     return id ? RepuestoRepository.findById(id) : RepuestoRepository.findAll();
   },
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
   async createRepuesto(data: any) {
     const proveedor = await RepuestoRepository.findProveedorById(data.proveedor_id);
     if (!proveedor) throw new Error('Proveedor no encontrado');
