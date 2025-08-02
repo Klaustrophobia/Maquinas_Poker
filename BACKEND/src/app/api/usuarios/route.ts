@@ -7,7 +7,6 @@ export async function GET(req: NextRequest) {
   if (auth) return auth;
 
   const result = await getAllUsersController();
-  console.log('Usuarios obtenidos:', result);
   if ('error' in result) {
     return NextResponse.json({ error: 'Error al obtener usuarios' }, { status: 500 });
   }

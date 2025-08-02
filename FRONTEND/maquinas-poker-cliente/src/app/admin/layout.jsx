@@ -37,9 +37,10 @@ export default function AdminLayout({ children }) {
               <a href="/admin/inventario" className="text-decoration-none">
                 Inventario
               </a>
-              {/* <a href="/usuarios" className="text-decoration-none">
+              <a href="/admin/usuarios" className="text-decoration-none">
                 Gestión de Usuarios
               </a>
+              {/*
               <a href="/reportes" className="text-decoration-none">
                 Reportes
               </a>
