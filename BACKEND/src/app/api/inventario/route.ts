@@ -12,8 +12,8 @@ export async function OPTIONS() {
 }
 
 export async function GET(req: NextRequest) {
-  // const auth = await authenticateRole(['admin', 'tecnico'])(req);
-  // if (auth) return auth;
+  const auth = await authenticateRole(['admin', 'tecnico'])(req);
+  if (auth) return auth;
   const result = await InventarioController.get(req);
     return new NextResponse(JSON.stringify(result), {
       status: 200,

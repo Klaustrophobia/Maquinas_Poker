@@ -36,6 +36,8 @@ export const authOptions = {
 
           const response = await res.json();
 
+          const { user, token } = response;
+
            if ('error' in response) {
             throw new Error(response.error || 'Error en la autenticación');
           }
@@ -48,15 +50,14 @@ export const authOptions = {
             throw new Error('Usuario inactivo');
           }
 
-          const user = response.user;
-
           return {
             id: user.id.toString(),
             name: user.nombre,
             email: user.correo,
             role: user.rol,
             telefono: user.telefono,
-            activo: user.activo
+            activo: user.activo,
+            accessToken: token
           };
         } catch (error) {
           console.error('Error en autenticación:', error.message);
@@ -73,6 +74,7 @@ export const authOptions = {
         token.role = user.role || user.rol;
         token.telefono = user.telefono;
         token.activo = user.activo;
+        token.accessToken = user.accessToken;
       }
       return token;
     },
@@ -87,6 +89,7 @@ export const authOptions = {
           telefono: token.telefono,
           activo: token.activo
         };
+        session.accessToken = token.accessToken;
       }
       return session;
     },

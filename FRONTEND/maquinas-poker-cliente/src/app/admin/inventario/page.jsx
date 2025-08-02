@@ -1,10 +1,12 @@
 'use client';
-
+import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 
 export default function Inventario() {
+  const { data: session } = useSession();
+  const token = session?.accessToken;
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
   const [ubicaciones, setUbicaciones] = useState([]);
@@ -17,7 +19,7 @@ export default function Inventario() {
         try {
           const response = await fetch(`http://localhost:4000/api/ubicaciones`, {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           });
   
           const data = await response.json();
@@ -31,7 +33,7 @@ export default function Inventario() {
         try {
           const response = await fetch(`http://localhost:4000/api/inventario/proveedores`, {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           });
   
           const data = await response.json();
@@ -79,7 +81,7 @@ export default function Inventario() {
     try {
       const response = await fetch('http://localhost:4000/api/inventario/maquinas', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(nuevaMaquina)
       });
 

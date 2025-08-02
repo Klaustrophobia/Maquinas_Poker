@@ -1,8 +1,11 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 export default function VerInventario() {
+  const { data: session } = useSession();
+  const token = session?.accessToken;
   const [inventario, setInventario] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -12,7 +15,7 @@ export default function VerInventario() {
       try {
         const response = await fetch('http://localhost:4000/api/inventario', {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         });
 
         const data = await response.json();

@@ -2,9 +2,12 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export default function VerRepuestos() {
   const router = useRouter();
+  const { data: session } = useSession();
+  const token = session?.accessToken;
   const [repuestos, setRepuestos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
@@ -14,13 +17,12 @@ export default function VerRepuestos() {
       try {
         const response = await fetch('http://localhost:4000/api/inventario/repuesto', {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         });
 
         const data = await response.json();
         if (data.length > 0) {
         setRepuestos(data);
-        console.log('Datos de repuestos obtenidos:', data);
         }
       } catch (error) {
         console.error('Error al obtener datos de repuestos:', error);

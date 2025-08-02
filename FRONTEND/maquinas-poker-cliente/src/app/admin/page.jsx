@@ -1,7 +1,11 @@
 'use client';
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 export default function AdminDashboard() {
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+  const [loading, setLoading] = useState(true);
   const [selectedTab, setSelectedTab] = useState("overview");
   const [machineData, setMachineData] = useState([]);
   const operationalMachines = machineData.filter((m) => m.estado === "Operativo").length;
@@ -98,19 +102,28 @@ export default function AdminDashboard() {
       try {
         const response = await fetch('http://localhost:4000/api/inventario/maquinas', {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
         });
 
         const data = await response.json();
-        console.log('Response status:', data);
         setMachineData(data);
       } catch (error) {
         console.error('Error al obtener datos de máquinas:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Cargando...</p>
+      </div>
+    );
+  }
 
   return (
 
