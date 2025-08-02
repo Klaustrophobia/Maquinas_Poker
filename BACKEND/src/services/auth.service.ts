@@ -25,7 +25,9 @@ export async function registerUserService(
     email: string, 
     password: string, 
     rol: string,
-    telefono: string
+    activo: boolean,
+    telefono?: string,
+    mfa_secret?: string
 ) {
     const existingUser = await findUserByNombreRepository(nombre);
     const existingEmail = await findUserByEmailRepository(email);
@@ -36,16 +38,17 @@ export async function registerUserService(
         return { error: 'El correo electrónico ya está en uso' };
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // const hashedPassword = await bcrypt.hash(password, 10);
     const fechaActual = new Date();
 
     const newUser = await createUserRepository({ 
         nombre, 
         email, 
-        password_hash: hashedPassword, 
+        password_hash: password, 
         rol,
         telefono,
-        activo: true,
+        activo,
+        mfa_secret,
         fecha_creacion: fechaActual,
         fecha_actualizacion: fechaActual
     });

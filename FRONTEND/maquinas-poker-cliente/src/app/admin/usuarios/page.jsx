@@ -85,25 +85,26 @@ export default function UsuariosPage() {
 
     } else {
       // Crear nuevo usuario
-      const newUser = {
-        nombre: formData.nombre,
-        email: formData.email,
-        password_hash: `hashed_${formData.password}`,
-        rol: formData.rol,
-        activo: formData.activo,
-        mfa_secret: formData.mfa_secret,
-        telefono: formData.telefono,
-      }
 
       try {
       const response = await fetch('http://localhost:4000/api/usuarios/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify(newUser)
+        body: JSON.stringify({
+            nombre: formData.nombre,
+            email: formData.email,
+            password: formData.password,
+            rol: formData.rol,
+            activo: formData.activo,
+            telefono: formData.telefono,
+            mfa_secret: formData.mfa_secret,
+          })
       });
 
       if (response.ok) {
-        router.push('/admin/usuarios');
+        setIsLogging(true);
+        const data = await response.json();
+        setUsuarios([...usuarios, data.newUser]);
       } else {
         console.error('Error al crear la máquina:', response.statusText);
       }
@@ -112,7 +113,7 @@ export default function UsuariosPage() {
      } finally {
       resetForm()
       setIsLoading(false);
-      setIsLogging(true);
+      setIsLogging(false);
       setShowModal(false)
      }
     }
