@@ -27,11 +27,5 @@ export async function deleteUserService(id: number) {
         return { error: 'No se pudo eliminar el usuario' };
     }
 
-    return {
-        id: deletedUser.id,
-        nombre: deletedUser.nombre,
-        email: deletedUser.email,
-        rol: deletedUser.rol,
-        telefono: deletedUser.telefono
-    };
+    return deletedUser;
 }

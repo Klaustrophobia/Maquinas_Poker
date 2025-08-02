@@ -110,10 +110,29 @@ export default function UsuariosPage() {
     setShowModal(true)
   }
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
+    setIsLoading(true);
     if (confirm("¿Estás seguro de que quieres eliminar este usuario?")) {
-      setUsuarios(usuarios.filter((user) => user.id !== id))
+      try {
+        const response = await fetch(`http://localhost:4000/api/usuarios`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ id }),
+        });
+
+        if (response.ok) {
+          setUsuarios(usuarios.filter((user) => user.id !== id));
+        } else {
+          console.error('Error al eliminar el usuario:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error al eliminar el usuario:', error);
+      } finally {
+        setIsLoading(false);
+        setIsLogging(true);
+      }
     }
+    setIsLogging(false);
   }
 
   const resetForm = () => {
@@ -287,7 +306,15 @@ export default function UsuariosPage() {
                                   className="btn btn-sm btn-outline-danger"
                                   onClick={() => handleDelete(usuario.id)}
                                 >
-                                  <i className="bi bi-trash"></i>
+                                  {isLoading ? (
+                                    <div className="spinner-border" role="status">
+                                      <span className="visually-hidden">Loading...</span>
+                                    </div>
+                                  ) : isLogging ? (
+                                    <i className="bi bi-check-all"></i>
+                                  ) : (
+                                    <i className="bi bi-trash"></i>
+                                  )}
                                 </button>
                               </div>
                             </td>
