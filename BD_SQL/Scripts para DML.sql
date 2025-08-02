@@ -5,9 +5,12 @@
 -- Deshabilitar la comprobaci�n de restricciones de clave externa temporalmente para facilitar la inserci�n masiva
 -- EXEC sp_MSforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT ALL";
 
+<<<<<<< HEAD:Scripts para DML.sql
 USE gestion_maquinas_poker;
 GO
 
+=======
+>>>>>>> master:BD_SQL/Scripts para DML.sql
 -- Inserci�n en tipos_transaccion
 SET IDENTITY_INSERT tipos_transaccion ON;
 INSERT INTO tipos_transaccion (id, nombre, descripcion, activa) VALUES
@@ -112,5 +115,16 @@ INSERT INTO inventarios (id, repuesto_id, ubicacion_id, cantidad, ultima_entrada
 (3, 3, 1, 12, '2025-06-20', '2025-07-11', 1, 11, 'Repuesto para Generador El�ctrico', '2025-06-15 14:00:00', '2025-07-11 16:00:00');
 SET IDENTITY_INSERT inventarios OFF;
 
+<<<<<<< HEAD:Scripts para DML.sql
+=======
+--insercion de proveedores 
+INSERT INTO dbo.proveedores (nombre, contacto, telefono, email, direccion, rtn, tipo_servicio, calificacion) VALUES
+('Repuestos del Centro S.A.', 'Manuel Solis', '2223-2027', 'ventas@repuestoscentro.com', 'Col. Centro America, Tegucigalpa', '08019999123456', 'Repuestos', 4),
+('Servicios Industriales Hn', 'Sofia Castro', '2223-2028', 'info@serviciosind.com', 'Blvd. Suyapa, Tegucigalpa', '08019999654321', 'Mantenimiento', 5),
+('Tecnología Global', 'Luis Ramirez', '2223-2029', 'contacto@tecnologiaglobal.com', 'Barrio Guamilito, San Pedro Sula', '08019999789012', 'Software', 3);
+GO
+
+
+>>>>>>> master:BD_SQL/Scripts para DML.sql
 -- Volver a habilitar la comprobaci�n de restricciones de clave externa
 -- EXEC sp_MSforeachtable "ALTER TABLE ? CHECK CONSTRAINT ALL";

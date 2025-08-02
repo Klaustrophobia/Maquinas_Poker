@@ -10,11 +10,19 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", 
+  ...compat.extends(
+    "next/core-web-vitals",
     "next/typescript",
     "plugin:jest-dom/recommended",
     "plugin:testing-library/react"
   ),
+  {
+    // Añade reglas personalizadas aquí
+    rules: {
+      "@typescript-eslint/no-unused-vars": "off",       // Desactiva el error de variables no usadas
+      "@typescript-eslint/no-explicit-any": "off",      // Permite el uso de 'any'
+    },
+  },
 ];
 
 export default eslintConfig;

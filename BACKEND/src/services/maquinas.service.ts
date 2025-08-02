@@ -31,7 +31,7 @@ export const MaquinaService = {
 
     return MaquinaRepository.create(maquina as Maquina);
   },
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
   async updateMaquina(data: any) {
     const maquina = await MaquinaRepository.findById(data.id);
     if (!maquina) throw new Error('Máquina no encontrada');

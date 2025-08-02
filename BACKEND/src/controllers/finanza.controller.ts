@@ -2,14 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import { FinanzaService } from '@/services/finanza.service';
 
 export const FinanzaController = {
-  async get(_: NextRequest) {
+  
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+   async get(_req: Request) {
     try {
       const data = await FinanzaService.getFinanzas();
       return NextResponse.json(data);
     } catch (error) {
+      console.error('Error en FinanzaController.get:', error);
       return NextResponse.json(
-        { error: (error as Error).message || 'Error desconocido al obtener finanzas' },
-        { status: 500 }
+        { 
+          error: error instanceof Error ? error.message : 'Error desconocido al obtener finanzas',
+          code: (error as any).code || 'UNKNOWN_ERROR'
+        },
+        { status: error instanceof Error && 'status' in error ? (error as any).status : 500 }
       );
     }
   },

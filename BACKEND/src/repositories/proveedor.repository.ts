@@ -9,6 +9,21 @@ export const ProveedorRepository = {
 
   async findById(id: number) {
     const db = await getDataSource();
-    return db.getRepository(Proveedor).findOne({ where: { id } });
+    return db.getRepository(Proveedor).findOneBy({ id });
+  },
+
+  async create(proveedor: Proveedor) {
+    const db = await getDataSource();
+    return db.getRepository(Proveedor).save(proveedor);
+  },
+
+  async update(proveedor: Proveedor) {
+    const db = await getDataSource();
+    return db.getRepository(Proveedor).save(proveedor);
+  },
+
+  async remove(proveedor: Proveedor) {
+    const db = await getDataSource();
+    return db.getRepository(Proveedor).remove(proveedor);
   },
 };

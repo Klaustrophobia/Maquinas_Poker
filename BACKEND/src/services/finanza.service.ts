@@ -1,12 +1,13 @@
 import { FinanzaRepository } from '@/repositories/finanza.repository';
 import { Finanza } from '@/entity/Finanza';
+import { FinanzaDTO } from '@/intrerface/finanza_input';
 
 export const FinanzaService = {
   async getFinanzas() {
     return FinanzaRepository.findAll();
   },
 
-  async createFinanza(data: any) {
+  async createFinanza(data: FinanzaDTO) {
     const nueva = {
       tipo_movimiento: data.tipo_movimiento,
       descripcion: data.descripcion,
@@ -27,7 +28,7 @@ export const FinanzaService = {
     return FinanzaRepository.create(nueva as Finanza);
   },
 
-  async updateFinanza(data: any) {
+  async updateFinanza(data: Partial<FinanzaDTO> & { id: number }) {
     const finanza = await FinanzaRepository.findById(data.id);
     if (!finanza) throw new Error('Registro financiero no encontrado');
 
