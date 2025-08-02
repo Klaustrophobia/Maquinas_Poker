@@ -4,9 +4,7 @@ import { Repuesto } from '@/entity/Repuesto';
 export const RepuestoRepository = {
   async findAll() {
     const db = await getDataSource();
-    const result = await db.getRepository(Repuesto).find({ relations: ['proveedor'] });
-    console.log('Repuestos found:', result);
-    return result;
+    return db.getRepository(Repuesto).find({ relations: ['proveedor'] });
   },
 
   async findById(id: number) {

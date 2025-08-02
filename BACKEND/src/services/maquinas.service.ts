@@ -7,15 +7,20 @@ export const MaquinaService = {
   },
 
   async createMaquina(data: any) {
-    const proveedor = await MaquinaRepository.findProveedorById(data.proveedor_id);
-    const ubicacion = await MaquinaRepository.findUbicacionById(data.ubicacion_id);
+    const proveedor = await MaquinaRepository.findProveedorById(Number(data.proveedor_id));
+    const ubicacion = await MaquinaRepository.findUbicacionById(Number(data.ubicacion_id));
 
     if (!proveedor || !ubicacion) throw new Error('Proveedor o ubicación no encontrada');
 
     const maquina = {
       ...data,
-      proveedor,
-      ubicacion,
+      proveedor: proveedor,
+      ubicacion: ubicacion,
+      modelo: data.modelo,
+      nombre: data.nombre,
+      notas: data.notas,
+      estado: data.estado,
+      numero_serie: data.numero_serie,
       fecha_adquisicion: new Date(data.fecha_adquisicion),
       fecha_instalacion: data.fecha_instalacion ? new Date(data.fecha_instalacion) : null,
       ultimo_mantenimiento: data.ultimo_mantenimiento ? new Date(data.ultimo_mantenimiento) : null,

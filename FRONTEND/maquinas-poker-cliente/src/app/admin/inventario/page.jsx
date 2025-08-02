@@ -1,15 +1,53 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 
 export default function Inventario() {
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
+  const [ubicaciones, setUbicaciones] = useState([]);
+  const [proveedores, setProveedores] = useState([]);
+  const [isLogging, setIsLogging] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+      const obtenerUbicaciones = async () => {
+        try {
+          const response = await fetch(`http://localhost:4000/api/ubicaciones`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+          });
+  
+          const data = await response.json();
+          setUbicaciones(data);
+        } catch (error) {
+          console.error('Error al obtener datos de ubicaciones:', error);
+        }
+      };
+
+      const obtenerProveedores = async () => {
+        try {
+          const response = await fetch(`http://localhost:4000/api/inventario/proveedores`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+          });
+  
+          const data = await response.json();
+          setProveedores(data);
+        } catch (error) {
+          console.error('Error al obtener datos de proveedores:', error);
+        }
+      };
+  
+      obtenerUbicaciones();
+      obtenerProveedores();
+    }, []);
 
   // State variables for the form fields in the modal
   const [numeroSerie, setNumeroSerie] = useState('');
+  const [nombre, setNombre] = useState('');
   const [modelo, setModelo] = useState('');
   const [fechaAdquisicion, setFechaAdquisicion] = useState('');
   const [fechaInstalacion, setFechaInstalacion] = useState('');
@@ -19,6 +57,43 @@ export default function Inventario() {
   const [ultimoMantenimiento, setUltimoMantenimiento] = useState('');
   const [proximoMantenimiento, setProximoMantenimiento] = useState('');
   const [notas, setNotas] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    const nuevaMaquina = {
+      numero_serie: numeroSerie,
+      nombre: nombre,
+      modelo: modelo,
+      fecha_adquisicion: fechaAdquisicion,
+      fecha_instalacion: fechaInstalacion,
+      estado: estado,
+      ubicacion_id: ubicacionId,
+      proveedor_id: proveedorId,
+      ultimo_mantenimiento: ultimoMantenimiento,
+      proximo_mantenimiento: proximoMantenimiento,
+      notas: notas
+    };
+
+    try {
+      const response = await fetch('http://localhost:4000/api/inventario/maquinas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(nuevaMaquina)
+      });
+
+      if (response.ok) {
+        setIsLogging(true);
+        setShowModal(false);
+        router.push('/admin');
+      } else {
+        console.error('Error al crear la máquina:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error al crear la máquina:', error);
+    }
+  };
 
   return (
     // Main container: light background, dark text
@@ -76,7 +151,7 @@ export default function Inventario() {
               </button>
             </div>
 
-            <form className="flex flex-col gap-4">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               {/* Número de Serie */}
               <div>
                 <label htmlFor="numeroSerie" className="block text-gray-700 text-sm font-semibold mb-1">Número de Serie</label>
@@ -90,6 +165,19 @@ export default function Inventario() {
                 />
               </div>
 
+              {/* Nombre */}
+              <div>
+                <label htmlFor="nombre" className="block text-gray-700 text-sm font-semibold mb-1">Nombre</label>
+                <input
+                  type="text"
+                  id="nombre"
+                  value={nombre}
+                  onChange={e => setNombre(e.target.value)}
+                  required
+                  className="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-colors duration-200"
+                />
+              </div>
+              
               {/* Modelo */}
               <div>
                 <label htmlFor="modelo" className="block text-gray-700 text-sm font-semibold mb-1">Modelo</label>
@@ -138,35 +226,33 @@ export default function Inventario() {
                   className="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-colors duration-200"
                 >
                   <option value="">Selecciona un estado</option>
-                  <option value="Operativa">Operativa</option>
+                  <option value="Operativo">Operativa</option>
                   <option value="En Mantenimiento">En Mantenimiento</option>
-                  <option value="Fuera de Servicio">Fuera de Servicio</option>
-                  <option value="En Almacén">En Almacén</option>
+                  <option value="Error">Fuera de Servicio</option>
+                  <option value="Almacen">En Almacén</option>
                 </select>
               </div>
 
               {/* Ubicación ID */}
               <div>
-                <label htmlFor="ubicacionId" className="block text-gray-700 text-sm font-semibold mb-1">ID Ubicación</label>
-                <input
-                  type="number"
-                  id="ubicacionId"
-                  value={ubicacionId}
-                  onChange={e => setUbicacionId(e.target.value)}
-                  className="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-colors duration-200"
-                />
+                <label htmlFor="ubicacionId" className="block text-gray-700 text-sm font-semibold mb-1">Ubicación</label>
+                <select value={ubicacionId} onChange={e => setUbicacionId(e.target.value)} className="form-select" aria-label="Default select example">
+                  <option value="">Selecciones una ubicacion</option>
+                  {ubicaciones.map((ubicacion) => (
+                    <option key={ubicacion.id} value={ubicacion.id}>{ubicacion.nombre}</option>
+                  ))}
+                </select>
               </div>
 
               {/* Proveedor ID */}
               <div>
-                <label htmlFor="proveedorId" className="block text-gray-700 text-sm font-semibold mb-1">ID Proveedor</label>
-                <input
-                  type="number"
-                  id="proveedorId"
-                  value={proveedorId}
-                  onChange={e => setProveedorId(e.target.value)}
-                  className="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-colors duration-200"
-                />
+                <label htmlFor="proveedorId" className="block text-gray-700 text-sm font-semibold mb-1">Proveedor</label>
+                <select value={proveedorId} onChange={e => setProveedorId(e.target.value)} className="form-select" aria-label="Default select example">
+                  <option value="">Selecciones un proveedor</option>
+                  {proveedores.map((proveedor) => (
+                    <option key={proveedor.id} value={proveedor.id}>{proveedor.nombre}</option>
+                  ))}
+                </select>
               </div>
 
               {/* Último Mantenimiento */}
@@ -210,7 +296,15 @@ export default function Inventario() {
                   type="submit"
                   className="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-400"
                 >
-                  Guardar
+                  {isLoading ? (
+                    <div className="spinner-border" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                  ) : isLogging ? (
+                    <i className="bi bi-check-all"></i>
+                  ) : (
+                    'Guardar'
+                  )}
                 </button>
                 <button
                   type="button"

@@ -1,4 +1,4 @@
-import { MaquinaService } from '@/services/maquinas.services';
+import { MaquinaService } from '@/services/maquinas.service';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const MaquinaController = {
@@ -15,8 +15,8 @@ export const MaquinaController = {
   async post(req: NextRequest) {
     const body = await req.json();
     try {
-      await MaquinaService.createMaquina(body);
-      return NextResponse.json({ message: 'Máquina creada correctamente' });
+      const data = await MaquinaService.createMaquina(body);
+      return data;
     } catch (error) {
       return NextResponse.json({ error: (error as Error).message }, { status: 404 });
     }

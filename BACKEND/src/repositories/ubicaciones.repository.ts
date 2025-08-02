@@ -1,8 +1,14 @@
 import { getDataSource } from "@/lib/data-source";
 import { Ubicacion } from "@/entity/Ubicacion";
 
-export async function findUbicacionByIdRepository(id: number) {
+export const UbicacionRepository = {
+  async findAll() {
     const db = await getDataSource();
-    const ubicacionRepository = db.getRepository(Ubicacion);
-    return ubicacionRepository.findOne( {where: { id }} );
-}
+    return db.getRepository(Ubicacion).find();
+  },
+
+  async findById(id: number) {
+    const db = await getDataSource();
+    return db.getRepository(Ubicacion).findOne({ where: { id } });
+  }
+};

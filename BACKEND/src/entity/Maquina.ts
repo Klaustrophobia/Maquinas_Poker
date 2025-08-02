@@ -11,6 +11,9 @@ export class Maquina {
     numero_serie!: string;
 
     @Column({ nullable: false })
+    nombre!: string;
+
+    @Column({ nullable: false })
     modelo!: string;
 
     @Column({ type: 'datetime', nullable: false })

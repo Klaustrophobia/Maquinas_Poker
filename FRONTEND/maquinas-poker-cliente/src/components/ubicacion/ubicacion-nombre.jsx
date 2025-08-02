@@ -8,7 +8,7 @@ export default function ubicacionNombre({ item }) {
   useEffect(() => {
     const obtenerUbicacion = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/api/ubicaciones/${item.ubicacion_id}`, {
+        const response = await fetch(`http://localhost:4000/api/ubicaciones?id=${item.ubicacion_id}`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
         });
