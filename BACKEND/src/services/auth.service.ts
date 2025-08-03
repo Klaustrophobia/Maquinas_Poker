@@ -26,7 +26,7 @@ export async function registerUserService(
     password: string, 
     rol: string,
     activo: boolean,
-    telefono?: string,
+    telefono: string,
     mfa_secret?: string
 ) {
     const existingUser = await findUserByNombreRepository(nombre);
