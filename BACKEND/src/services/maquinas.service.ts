@@ -9,6 +9,7 @@ export const MaquinaService = {
   async createMaquina(data: any) {
     const proveedor = await MaquinaRepository.findProveedorById(Number(data.proveedor_id));
     const ubicacion = await MaquinaRepository.findUbicacionById(Number(data.ubicacion_id));
+    const usuario = await MaquinaRepository.findUsuarioById(Number(data.usuario_id));
 
     if (!proveedor || !ubicacion) throw new Error('Proveedor o ubicación no encontrada');
 
@@ -16,6 +17,7 @@ export const MaquinaService = {
       ...data,
       proveedor: proveedor,
       ubicacion: ubicacion,
+      usuario: usuario,
       modelo: data.modelo,
       nombre: data.nombre,
       notas: data.notas,

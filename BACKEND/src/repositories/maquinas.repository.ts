@@ -35,5 +35,10 @@ export const MaquinaRepository = {
   async findUbicacionById(id: number) {
     const db = await getDataSource();
     return db.getRepository('Ubicacion').findOneBy({ id });
+  },
+
+  async findUsuarioById(id: number){
+    const db = await getDataSource();
+    return db.getRepository('User').findOneBy({ id });
   }
 };
