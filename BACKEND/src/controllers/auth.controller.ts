@@ -1,35 +1,37 @@
 import { loginUserService, registerUserService } from '@/services/auth.service';
 
-export async function loginController(body: { nombre: string; password: string }) {
-  const { nombre, password } = body;
+export async function loginController(body: { email: string; password: string }) {
+  const { email, password } = body;
 
-  if (!nombre || !password) {
-    return { error: 'Nombre y contraseña son obligatorios' };
+  if (!email || !password) {
+    return { error: 'Correo y contraseña son obligatorios' };
   }
 
-  const result = await loginUserService(nombre, password);
+  const result = await loginUserService(email, password);
   return { ...result };
 }
 
 export async function registerController(body: { 
     nombre: string;
-    email: string; 
-    password: string; 
+    email: string;
+    password: string;
     rol: string;
-    telefono: string;
+    activo: boolean;
+    telefono?: string;
+    mfa_secret?: string;
 }) {
     const { nombre,
             email,
             password, 
             rol,
-            telefono } = body;
+            telefono, activo, mfa_secret } = body;
 
     if (!nombre || !email || !password || !rol || !telefono) {
         return { error: 'Faltan campos requeridos, verifique e intente nuevamente' };
     }
 
-    const result = await registerUserService(nombre, 
-        email, password, rol, telefono);
+    const result = await registerUserService(nombre,
+        email, password, rol, activo, telefono, mfa_secret);
 
     if (result.error) {
         return { error: result.error }

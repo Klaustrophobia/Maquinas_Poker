@@ -31,7 +31,7 @@ export default function Inventario() {
 
       const obtenerProveedores = async () => {
         try {
-          const response = await fetch(`http://localhost:4000/api/inventario/proveedores`, {
+          const response = await fetch(`http://localhost:4000/api/inventario/proveedor`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           });

@@ -25,7 +25,9 @@ export async function registerUserService(
     email: string, 
     password: string, 
     rol: string,
-    telefono: string
+    activo: boolean,
+    telefono?: string,
+    mfa_secret?: string
 ) {
     const existingUser = await findUserByNombreRepository(nombre);
     const existingEmail = await findUserByEmailRepository(email);
@@ -45,7 +47,8 @@ export async function registerUserService(
         password_hash: password, 
         rol,
         telefono,
-        activo: true,
+        activo,
+        mfa_secret,
         fecha_creacion: fechaActual,
         fecha_actualizacion: fechaActual
     });
