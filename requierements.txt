@@ -4,3 +4,6 @@ npm install better-sqlite3
 npm install chart.js react-chartjs-2 
 npm install next-auth @types/next-auth bcryptjs
 npm install react-toastify
+npm install pdfkit
+npm install --save-dev @types/pdfkit
+
