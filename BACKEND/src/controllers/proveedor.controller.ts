@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ProveedorService } from '@/services/proveedor.service';
+import { corsHeaders } from '@/lib/cors';
 
 export const ProveedorController = {
   async get(req: NextRequest) {
@@ -9,7 +10,7 @@ export const ProveedorController = {
     try {
       const data = await ProveedorService.getProveedores(id ? Number(id) : undefined);
       if (!data && id) return NextResponse.json({ error: 'Proveedor no encontrado' }, { status: 404 });
-      return NextResponse.json(data);
+      return data;
     } catch (error) {
       return NextResponse.json({ error: (error as Error).message }, { status: 500 });
     }
@@ -19,7 +20,10 @@ export const ProveedorController = {
     try {
       const body = await req.json();
       await ProveedorService.createProveedor(body);
-      return NextResponse.json({ message: 'Proveedor creado correctamente' });
+      return new NextResponse(JSON.stringify({ message: 'Proveedor creado correctamente' }), {
+            status: 201,
+            headers: corsHeaders
+          });
     } catch (error) {
       return NextResponse.json({ error: (error as Error).message }, { status: 500 });
     }
@@ -29,7 +33,10 @@ export const ProveedorController = {
     try {
       const body = await req.json();
       await ProveedorService.updateProveedor(body);
-      return NextResponse.json({ message: 'Proveedor actualizado correctamente' });
+      return new NextResponse(JSON.stringify({ message: 'Proveedor actualizado correctamente' }), {
+            status: 200,
+            headers: corsHeaders
+          });
     } catch (error) {
       return NextResponse.json({ error: (error as Error).message }, { status: 500 });
     }
@@ -43,7 +50,10 @@ export const ProveedorController = {
 
     try {
       await ProveedorService.deleteProveedor(Number(id));
-      return NextResponse.json({ message: 'Proveedor eliminado correctamente' });
+      return new NextResponse(JSON.stringify({ message: 'Proveedor eliminado correctamente' }), {
+            status: 200,
+            headers: corsHeaders
+          });
     } catch (error) {
       return NextResponse.json({ error: (error as Error).message }, { status: 500 });
     }

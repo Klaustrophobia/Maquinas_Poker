@@ -1,15 +1,10 @@
-<<<<<<< HEAD
-=======
 import { Proveedor } from '@/entity/Proveedor';
->>>>>>> master
 import { ProveedorRepository } from '@/repositories/proveedor.repository';
 
 export const ProveedorService = {
-  async getProveedores(id?: number) {
+  async getProveedores(id?: number) { 
     return id ? ProveedorRepository.findById(id) : ProveedorRepository.findAll();
   },
-<<<<<<< HEAD
-=======
 
   async createProveedor(data: Omit<Proveedor, 'id'>) { //Crea un nuevo tipo que tiene todas las propiedades de la entidad Proveedor excepto id
     // Validación adicional de email
@@ -35,5 +30,4 @@ export const ProveedorService = {
     if (!proveedor) throw new Error('Proveedor no encontrado');
     return ProveedorRepository.remove(proveedor);
   },
->>>>>>> master
 };

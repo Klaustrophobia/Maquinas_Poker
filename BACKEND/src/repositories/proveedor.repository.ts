@@ -1,5 +1,6 @@
 import { getDataSource } from '@/lib/data-source';
 import { Proveedor } from '@/entity/Proveedor';
+import { Maquina } from '@/entity/Maquina';
 
 export const ProveedorRepository = {
   async findAll() {
@@ -24,6 +25,10 @@ export const ProveedorRepository = {
 
   async remove(proveedor: Proveedor) {
     const db = await getDataSource();
+    await db.query(
+      `UPDATE maquinas SET proveedor_id = NULL WHERE proveedor_id = @0`,
+      [proveedor.id]
+    );
     return db.getRepository(Proveedor).remove(proveedor);
   },
 };

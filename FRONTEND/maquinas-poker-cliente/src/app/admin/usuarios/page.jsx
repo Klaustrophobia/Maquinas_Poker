@@ -80,7 +80,6 @@ export default function UsuariosPage() {
         setIsLogging(false);
       }
 
-
     } else {
       // Crear nuevo usuario
 
@@ -455,7 +454,6 @@ export default function UsuariosPage() {
                       ) : (
                         editingUser ? "Actualizar Usuario" : "Crear Usuario"
                       )}
-                      
                     </button>
                   </div>
                 </form>

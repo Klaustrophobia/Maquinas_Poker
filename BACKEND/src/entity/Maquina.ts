@@ -29,7 +29,7 @@ export class Maquina {
     @JoinColumn({ name: 'ultima_ubicacion_id' })
     ubicacion!: Ubicacion;
 
-    @ManyToOne(() => Proveedor)
+    @ManyToOne(() => Proveedor, { nullable: true })
     @JoinColumn({ name: 'proveedor_id' })
     proveedor!: Proveedor;
 
