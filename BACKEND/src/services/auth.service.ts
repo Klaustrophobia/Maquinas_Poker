@@ -1,15 +1,17 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { findUserByNombreRepository, createUserRepository, findUserByEmailRepository } from '@/repositories/user.repository';
+import { findUserByNombreRepository, createUserRepository, findUserByEmailRepository, updateUltimoLoginRepository } from '@/repositories/user.repository';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'clave_secreta_maquinas_poker';
 
-export async function loginUserService(nombre: string, password: string) {
-  const user = await findUserByNombreRepository(nombre);
+export async function loginUserService(email: string, password: string) {
+  const user = await findUserByEmailRepository(email);
   if (!user) return { error: 'Usuario no encontrado' };
     // console.log("UsuarioService", nombre, password, user);
-  const contraseñaValida = await bcrypt.compare(password, user.password_hash);
+  const contraseñaValida = password === user.password_hash;
   if (!contraseñaValida) return { error: 'Contraseña inválida' };
+
+  updateUltimoLoginRepository(user.id);
 
     const token = jwt.sign({ id: user.id, rol: user.rol }, JWT_SECRET, {
       expiresIn: '4h',
@@ -23,7 +25,9 @@ export async function registerUserService(
     email: string, 
     password: string, 
     rol: string,
-    telefono: string
+    activo: boolean,
+    telefono?: string,
+    mfa_secret?: string
 ) {
     const existingUser = await findUserByNombreRepository(nombre);
     const existingEmail = await findUserByEmailRepository(email);
@@ -34,16 +38,17 @@ export async function registerUserService(
         return { error: 'El correo electrónico ya está en uso' };
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // const hashedPassword = await bcrypt.hash(password, 10);
     const fechaActual = new Date();
 
     const newUser = await createUserRepository({ 
         nombre, 
         email, 
-        password_hash: hashedPassword, 
+        password_hash: password, 
         rol,
         telefono,
-        activo: true,
+        activo,
+        mfa_secret,
         fecha_creacion: fechaActual,
         fecha_actualizacion: fechaActual
     });
