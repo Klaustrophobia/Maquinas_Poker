@@ -35,7 +35,7 @@ export default function AdminLayout({ children }) {
 
             <nav className="d-flex align-items-center gap-4">
               <a href="/admin/inventario" className="text-decoration-none">
-                Inventario
+                Gestión de Inventario
               </a>
               <a href="/admin/usuarios" className="text-decoration-none">
                 Gestión de Usuarios
