@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
   if (auth) return auth;
   const result = await MaquinaController.post(req);
   return new NextResponse(JSON.stringify(result), {
-    status: 201,
+    status: 200,
     headers: corsHeaders
   });
 }

@@ -36,7 +36,7 @@ export class Maquina {
 
     @ManyToOne(() => User, { nullable: true })
     @JoinColumn({ name: 'usuario_id' })
-    usuario_id!: User;
+    usuario!: User;
 
     @Column({ type: 'datetime', nullable: true })
     ultimo_mantenimiento!: Date;
