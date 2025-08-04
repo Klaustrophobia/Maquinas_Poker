@@ -1,5 +1,6 @@
 import { MaquinaService } from '@/services/maquinas.service';
 import { NextRequest, NextResponse } from 'next/server';
+import { corsHeaders } from '@/lib/cors';
 
 export const MaquinaController = {
   async get(req: NextRequest) {
@@ -26,7 +27,10 @@ export const MaquinaController = {
     const body = await req.json();
     try {
       await MaquinaService.updateMaquina(body);
-      return NextResponse.json({ message: 'Máquina actualizada correctamente' });
+      return new NextResponse(JSON.stringify({ message: 'Máquina actualizada correctamente' }), {
+          status: 201,
+          headers: corsHeaders
+        });
     } catch (error) {
       return NextResponse.json({ error: (error as Error).message }, { status: 404 });
     }
@@ -40,7 +44,10 @@ export const MaquinaController = {
 
     try {
       await MaquinaService.deleteMaquina(Number(id));
-      return NextResponse.json({ message: 'Máquina eliminada correctamente' });
+      return new NextResponse(JSON.stringify({ message: 'Máquina eliminada correctamente' }), {
+          status: 201,
+          headers: corsHeaders
+        });
     } catch (error) {
       return NextResponse.json({ error: (error as Error).message }, { status: 404 });
     }

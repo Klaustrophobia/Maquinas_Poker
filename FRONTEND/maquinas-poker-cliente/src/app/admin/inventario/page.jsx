@@ -42,7 +42,8 @@ export default function Inventario() {
           console.error('Error al obtener datos de proveedores:', error);
         }
       };
-  
+
+      
       obtenerUbicaciones();
       obtenerProveedores();
     }, []);
@@ -115,10 +116,11 @@ export default function Inventario() {
           <span className="text-xl font-semibold text-gray-800 group-hover:text-blue-600 transition-colors duration-300">Ver Inventario</span>
         </button>
 
-        {/* Card: Registrar Inventario */}
+        {/* Card: Maquinas */}
         <button
           className="flex flex-col items-center justify-center p-8 bg-white rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-2 border border-gray-200 hover:border-green-500 transition-all duration-300 group"
-          onClick={() => setShowModal(true)}
+          onClick={() => router.push('/admin/inventario/maquinas')}
+          /*onClick={() => setShowModal(true)}*/
         >
           <img src="/maquinascrear.jpg" alt="Crear Registro" className="w-40 h-40 object-cover rounded-lg mb-4 group-hover:scale-105 transition-transform duration-300" />
           <span className="text-xl font-semibold text-gray-800 group-hover:text-green-600 transition-colors duration-300">Registrar Máquina</span>
@@ -134,7 +136,7 @@ export default function Inventario() {
         </button>
       </div>
 
-      {/* Modal for Registering Machine */}
+      {/*------------------------ Modal for Registering Machine ---------------------------------*/}
       {showModal && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 animate-fade-in"
