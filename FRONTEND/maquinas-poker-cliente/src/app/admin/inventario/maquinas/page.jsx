@@ -35,11 +35,11 @@ export default function MaquinasPage() {
     })
 
     const estados = [
-      { value: "operativa", label: "Operativa", color: "success" },
-      { value: "mantenimiento", label: "En Mantenimiento", color: "warning" },
-      { value: "fuera_servicio", label: "Fuera de Servicio", color: "danger" },
-      { value: "en_reparacion", label: "En Reparación", color: "info" },
-      { value: "almacenada", label: "Almacenada", color: "secondary" },
+      { value: "Operativo", label: "Operativa", color: "success" },
+      { value: "Advertencia", label: "En Alerta", color: "warning" },
+      { value: "Error", label: "Fuera de Servicio", color: "danger" },
+      { value: "En Mantenimiento", label: "En Mantenimiento", color: "info" },
+      { value: "Almacen", label: "Almacenada", color: "secondary" },
     ]
 
     const filteredMaquinas = maquinas.filter((maquina) => {
@@ -48,7 +48,7 @@ export default function MaquinasPage() {
         maquina.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
         maquina.modelo.toLowerCase().includes(searchTerm.toLowerCase())
       const matchesEstado = filterEstado === "" || maquina.estado === filterEstado
-      const matchesUbicacion = filterUbicacion === "" || maquina.ultima_ubicacion_id.toString() === filterUbicacion
+      const matchesUbicacion = filterUbicacion === "" || maquina.ubicacion.id.toString() === filterUbicacion
 
       return matchesSearch && matchesEstado && matchesUbicacion
     })
@@ -217,6 +217,7 @@ export default function MaquinasPage() {
       });
 
       const data = await response.json();
+      console.log("Datos de máquinas:", data);
       setMaquinas(data);
     } catch (error) {
       console.error('Error al obtener datos de máquinas:', error);
@@ -365,7 +366,7 @@ export default function MaquinasPage() {
                         <th>Proveedor</th>
                         <th>Último Mant.</th>
                         <th>Próximo Mant.</th>
-                        <th>Responsable</th>
+                        <th>Asignado a</th>
                         <th>Acciones</th>
                       </tr>
                     </thead>
@@ -381,12 +382,12 @@ export default function MaquinasPage() {
                               <div className="fw-medium">{maquina.nombre}</div>
                             </td>
                             <td>{maquina.modelo}</td>
-                            <td>
+                            <td className="text-center">
                               <span className={`badge bg-${estadoInfo.color}`}>{estadoInfo.label}</span>
                             </td>
-                            <td>{maquina.ubicacion_nombre}</td>
+                            <td>{maquina.ubicacion.nombre}</td>
                             <td>
-                              <small>{maquina.proveedor_nombre}</small>
+                              <small>{maquina?.proveedor?.nombre ?? "No hay proveedor"}</small>
                             </td>
                             <td>
                               {maquina.ultimo_mantenimiento
@@ -408,7 +409,7 @@ export default function MaquinasPage() {
                               </span>
                             </td>
                             <td>
-                              <small>{maquina.usuario_nombre}</small>
+                              <small>{maquina.usuario.nombre}</small>
                             </td>
                             <td>
                               <div className="btn-group" role="group">
@@ -520,7 +521,7 @@ export default function MaquinasPage() {
                       <input
                         type="date"
                         className="form-control"
-                        value={formData.fecha_adquisicion}
+                        value={new Date(formData.fecha_adquisicion)}
                         onChange={(e) => setFormData({ ...formData, fecha_adquisicion: e.target.value })}
                         required
                       />
@@ -530,7 +531,7 @@ export default function MaquinasPage() {
                       <input
                         type="date"
                         className="form-control"
-                        value={formData.fecha_instalacion}
+                        value={new Date(formData.fecha_instalacion)}
                         onChange={(e) => setFormData({ ...formData, fecha_instalacion: e.target.value })}
                         required
                       />
@@ -580,7 +581,7 @@ export default function MaquinasPage() {
                       <input
                         type="date"
                         className="form-control"
-                        value={formData.ultimo_mantenimiento}
+                        value={new Date(formData.ultimo_mantenimiento)}
                         onChange={(e) => setFormData({ ...formData, ultimo_mantenimiento: e.target.value })}
                       />
                     </div>
@@ -589,7 +590,7 @@ export default function MaquinasPage() {
                       <input
                         type="date"
                         className="form-control"
-                        value={formData.proximo_mantenimiento}
+                        value={new Date(formData.proximo_mantenimiento)}
                         onChange={(e) => setFormData({ ...formData, proximo_mantenimiento: e.target.value })}
                         required
                       />
@@ -630,7 +631,15 @@ export default function MaquinasPage() {
                     Cancelar
                   </button>
                   <button type="submit" className="btn btn-primary">
-                    {editingMaquina ? "Actualizar" : "Crear"} Máquina
+                    {isLoading ? (
+                      <div className="spinner-border" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                    ) : isLogging ? (
+                      <i className="bi bi-check-all"></i>
+                    ) : (
+                      editingMaquina ? "Actualizar Máquina" : "Crear Máquina"
+                    )}
                   </button>
                 </div>
               </form>
