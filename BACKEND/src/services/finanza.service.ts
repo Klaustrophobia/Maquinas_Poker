@@ -8,6 +8,10 @@ export const FinanzaService = {
   },
 
   async createFinanza(data: FinanzaDTO) {
+    if (!data.tipo_movimiento || !data.descripcion || !data.monto || !data.moneda) {
+    throw new Error('Faltan campos obligatorios');
+  }
+
     const nueva = {
       tipo_movimiento: data.tipo_movimiento,
       descripcion: data.descripcion,

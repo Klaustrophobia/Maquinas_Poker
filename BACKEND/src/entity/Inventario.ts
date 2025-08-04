@@ -31,7 +31,7 @@ export class Inventario {
   ultima_salida_cantidad!: number;
 
   @Column({ nullable: true })
-  stock!: number;
+  stock_minimo!: number;
 
   @Column({ nullable: true })
   notas!: string;
