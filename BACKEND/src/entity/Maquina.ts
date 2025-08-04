@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Ubicacion } from './Ubicacion';
 import { Proveedor } from './Proveedor';
+import { User } from './User';
 
 @Entity('maquinas')
 export class Maquina {
@@ -32,6 +33,10 @@ export class Maquina {
     @ManyToOne(() => Proveedor, { nullable: true })
     @JoinColumn({ name: 'proveedor_id' })
     proveedor!: Proveedor;
+
+    @ManyToOne(() => User, { nullable: true })
+    @JoinColumn({ name: 'usuario_id' })
+    usuario_id!: User;
 
     @Column({ type: 'datetime', nullable: true })
     ultimo_mantenimiento!: Date;

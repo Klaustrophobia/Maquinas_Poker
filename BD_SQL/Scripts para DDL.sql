@@ -1,4 +1,4 @@
--- Script de Creación de Tablas para SQL Server
+-- Script de Creaciï¿½n de Tablas para SQL Server
 
 USE gestion_maquinas_poker;
 GO
@@ -69,7 +69,8 @@ CREATE TABLE maquinas (
     creado_en DATETIME DEFAULT GETDATE(),
     actualizado_en DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (proveedor_id) REFERENCES proveedores(id),
-    FOREIGN KEY (ultima_ubicacion_id) REFERENCES ubicaciones(id)
+    FOREIGN KEY (ultima_ubicacion_id) REFERENCES ubicaciones(id),
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );
 
 -- Tabla repuestos
@@ -80,7 +81,7 @@ CREATE TABLE repuestos (
     descripcion TEXT,
     proveedor_id INT,
     precio_unitario DECIMAL(10, 2),
-    ubicacion_id INT, -- Ubicación por defecto o principal del repuesto
+    ubicacion_id INT, -- Ubicaciï¿½n por defecto o principal del repuesto
     compatible_con VARCHAR(255),
     fecha_ultimo_reabastecimiento DATE,
     FOREIGN KEY (proveedor_id) REFERENCES proveedores(id),
@@ -121,7 +122,7 @@ CREATE TABLE finanzas (
     notas TEXT,
     FOREIGN KEY (maquina_id) REFERENCES maquinas(id),
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
-    -- FOREIGN KEY (transaccion_id) REFERENCES transacciones(id), -- Se añade después para evitar ciclo de dependencia
+    -- FOREIGN KEY (transaccion_id) REFERENCES transacciones(id), -- Se aï¿½ade despuï¿½s para evitar ciclo de dependencia
     FOREIGN KEY (orden_trabajo_id) REFERENCES ordenes_trabajo(id)
 );
 
@@ -143,7 +144,7 @@ CREATE TABLE transacciones (
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );
 
--- Ahora que transacciones existe, podemos añadir la FK en finanzas
+-- Ahora que transacciones existe, podemos aï¿½adir la FK en finanzas
 ALTER TABLE finanzas
 ADD CONSTRAINT FK_finanzas_transacciones FOREIGN KEY (transaccion_id) REFERENCES transacciones(id);
 
@@ -157,19 +158,19 @@ CREATE TABLE inventarios (
     ultima_entrada_fecha DATE,
     ultima_salida_fecha DATE,
     ultima_salida_cantidad INT,
-    stock INT, -- Podría ser un valor calculado o almacenado
+    stock INT, -- Podrï¿½a ser un valor calculado o almacenado
     notas TEXT,
     creado_en DATETIME DEFAULT GETDATE(),
     actualizado_en DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (repuesto_id) REFERENCES repuestos(id),
     FOREIGN KEY (ubicacion_id) REFERENCES ubicaciones(id),
-    CONSTRAINT UQ_Inventario_Repuesto_Ubicacion UNIQUE (repuesto_id, ubicacion_id) -- Un repuesto solo puede tener una entrada por ubicación
+    CONSTRAINT UQ_Inventario_Repuesto_Ubicacion UNIQUE (repuesto_id, ubicacion_id) -- Un repuesto solo puede tener una entrada por ubicaciï¿½n
 );
 
 -- Tabla tecnicos
 CREATE TABLE tecnicos (
     id INT PRIMARY KEY IDENTITY(1,1),
-    usuario_id INT UNIQUE, -- Un técnico puede ser un usuario del sistema
+    usuario_id INT UNIQUE, -- Un tï¿½cnico puede ser un usuario del sistema
     tipo_login VARCHAR(50), -- Ej. Empleado, Contratista
     mnte_secret BIT DEFAULT 0, -- Asumiendo que es una columna booleana para 'mantenimiento secreto' o similar
     especialidad VARCHAR(100),
@@ -177,7 +178,7 @@ CREATE TABLE tecnicos (
     vehiculo_asignado VARCHAR(100),
     herramienta_asignada VARCHAR(255),
     calificacion_promedio DECIMAL(3, 1),
-    ubicacion_actual INT, -- Última ubicación conocida del técnico
+    ubicacion_actual INT, -- ï¿½ltima ubicaciï¿½n conocida del tï¿½cnico
     ultima_ubicacion_lat DECIMAL(10, 8),
     ultima_ubicacion_lon DECIMAL(11, 8),
     ultima_actualizacion_ubicacion DATETIME,
@@ -191,7 +192,7 @@ CREATE TABLE mantenimientos (
     orden_trabajo_id INT NOT NULL,
     tipo VARCHAR(100), -- Ej. Preventivo, Correctivo
     acciones_realizadas TEXT,
-    repuestos_utilizados TEXT, -- Podría ser un JSON o lista de texto
+    repuestos_utilizados TEXT, -- Podrï¿½a ser un JSON o lista de texto
     costo_estimado DECIMAL(18, 2),
     costo_real DECIMAL(18, 2),
     fecha_programada DATETIME,
