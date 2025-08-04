@@ -27,6 +27,8 @@ export default function UsuariosPage() {
 
   const roles = ["admin", "cliente", "tecnico"]
 
+  const Createroles = ["cliente", "tecnico"]
+
   const filteredUsuarios = usuarios.filter((usuario) => {
     const matchesSearch =
       usuario.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -409,7 +411,7 @@ export default function UsuariosPage() {
                           onChange={(e) => setFormData({ ...formData, rol: e.target.value })}
                           required
                         >
-                          {roles.map((rol) => (
+                          {Createroles.map((rol) => (
                             <option key={rol} value={rol}>
                               {rol}
                             </option>
