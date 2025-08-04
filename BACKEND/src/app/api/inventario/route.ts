@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
       ultima_entrada_cantidad,
       ultima_salida_fecha,
       ultima_salida_cantidad,
-      stock,
+      stock_minimo,
       notas
     } = body;
 
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
       ultima_entrada_cantidad,
       ultima_salida_fecha: new Date(ultima_salida_fecha),
       ultima_salida_cantidad,
-      stock,
+      stock_minimo,
       notas,
       creado_en: new Date(),
       actualizado_en: new Date()
@@ -96,7 +96,7 @@ export async function PUT(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { id, cantidad, stock, ultima_entrada_cantidad, ultima_entrada_fecha, ultima_salida_cantidad, ultima_salida_fecha, notas } = body;
+    const { id, cantidad, stock_minimo, ultima_entrada_cantidad, ultima_entrada_fecha, ultima_salida_cantidad, ultima_salida_fecha, notas } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'Falta el ID del inventario' }, { status: 400 });
@@ -112,7 +112,7 @@ export async function PUT(req: NextRequest) {
 
     // Actualizamos campos si están presentes en el body
     if (cantidad !== undefined) inventario.cantidad = cantidad;
-    if (stock !== undefined) inventario.stock = stock;
+    if (stock_minimo !== undefined) inventario.stock_minimo = stock_minimo;
     if (ultima_entrada_cantidad !== undefined) inventario.ultima_entrada_cantidad = ultima_entrada_cantidad;
     if (ultima_entrada_fecha) inventario.ultima_entrada_fecha = new Date(ultima_entrada_fecha);
     if (ultima_salida_cantidad !== undefined) inventario.ultima_salida_cantidad = ultima_salida_cantidad;
