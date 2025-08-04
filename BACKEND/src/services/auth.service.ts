@@ -8,10 +8,10 @@ export async function loginUserService(email: string, password: string) {
   const user = await findUserByEmailRepository(email);
   if (!user) return { error: 'Usuario no encontrado' };
     // console.log("UsuarioService", nombre, password, user);
-  const contraseñaValida = password === user.password_hash;
+  const contraseñaValida = await bcrypt.compare(password, user.password_hash);
   if (!contraseñaValida) return { error: 'Contraseña inválida' };
 
-  updateUltimoLoginRepository(user.id);
+    updateUltimoLoginRepository(user.id);
 
     const token = jwt.sign({ id: user.id, rol: user.rol }, JWT_SECRET, {
       expiresIn: '4h',
@@ -38,13 +38,13 @@ export async function registerUserService(
         return { error: 'El correo electrónico ya está en uso' };
     }
 
-    // const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
     const fechaActual = new Date();
 
     const newUser = await createUserRepository({ 
         nombre, 
         email, 
-        password_hash: password, 
+        password_hash: hashedPassword, 
         rol,
         telefono,
         activo,
