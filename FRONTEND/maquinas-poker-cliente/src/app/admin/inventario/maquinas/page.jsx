@@ -523,7 +523,7 @@ export default function MaquinasPage() {
                       <input
                         type="date"
                         className="form-control"
-                        value={formatDateToYMD(formData.fecha_adquisicion)}
+                        value={formData.fecha_adquisicion ? formatDateToYMD(formData.fecha_adquisicion): formData.fecha_adquisicion}
                         onChange={(e) => setFormData({ ...formData, fecha_adquisicion: e.target.value })}
                         required
                       />
@@ -533,7 +533,7 @@ export default function MaquinasPage() {
                       <input
                         type="date"
                         className="form-control"
-                        value={formatDateToYMD(formData.fecha_instalacion)}
+                        value={formData.fecha_instalacion ? formatDateToYMD(formData.fecha_instalacion) : formData.fecha_instalacion}
                         onChange={(e) => setFormData({ ...formData, fecha_instalacion: e.target.value })}
                         required
                       />
@@ -583,7 +583,7 @@ export default function MaquinasPage() {
                       <input
                         type="date"
                         className="form-control"
-                        value={formatDateToYMD(formData.ultimo_mantenimiento)}
+                        value={formData.ultimo_mantenimiento ? formatDateToYMD(formData.ultimo_mantenimiento) : formData.ultimo_mantenimiento}
                         onChange={(e) => setFormData({ ...formData, ultimo_mantenimiento: e.target.value })}
                       />
                     </div>
@@ -592,7 +592,7 @@ export default function MaquinasPage() {
                       <input
                         type="date"
                         className="form-control"
-                        value={formatDateToYMD(formData.proximo_mantenimiento)}
+                        value={formData.proximo_mantenimiento ? formatDateToYMD(formData.proximo_mantenimiento) : formData.proximo_mantenimiento}
                         onChange={(e) => setFormData({ ...formData, proximo_mantenimiento: e.target.value })}
                         required
                       />
@@ -608,6 +608,7 @@ export default function MaquinasPage() {
                         onChange={(e) => setFormData({ ...formData, usuario_id: Number.parseInt(e.target.value) })}
                         required
                       >
+                        <option value={0}>Seleccionar responsable</option>
                         {usuarios.map((usuario) => (
                           <option key={usuario.id} value={usuario.id}>
                             {usuario.nombre}
