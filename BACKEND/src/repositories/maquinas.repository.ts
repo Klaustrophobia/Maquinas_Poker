@@ -1,5 +1,8 @@
 import { getDataSource } from '@/lib/data-source';
 import { Maquina } from '@/entity/Maquina';
+import { Proveedor } from '@/entity/Proveedor';
+import { Ubicacion } from '@/entity/Ubicacion';
+import { User } from '@/entity/User';
 
 export const MaquinaRepository = {
   async findAll() {
@@ -29,16 +32,16 @@ export const MaquinaRepository = {
 
   async findProveedorById(id: number) {
     const db = await getDataSource();
-    return db.getRepository('Proveedor').findOneBy({ id });
+    return db.getRepository(Proveedor).findOne({ where: { id } });
   },
 
   async findUbicacionById(id: number) {
     const db = await getDataSource();
-    return db.getRepository('Ubicacion').findOneBy({ id });
+    return db.getRepository(Ubicacion).findOne({ where: { id } });
   },
 
   async findUsuarioById(id: number){
     const db = await getDataSource();
-    return db.getRepository('User').findOneBy({ id });
+    return db.getRepository(User).findOne({ where: { id } });
   }
 };

@@ -28,7 +28,7 @@ export const MaquinaController = {
     try {
       await MaquinaService.updateMaquina(body);
       return new NextResponse(JSON.stringify({ message: 'Máquina actualizada correctamente' }), {
-          status: 201,
+          status: 200,
           headers: corsHeaders
         });
     } catch (error) {
@@ -45,7 +45,7 @@ export const MaquinaController = {
     try {
       await MaquinaService.deleteMaquina(Number(id));
       return new NextResponse(JSON.stringify({ message: 'Máquina eliminada correctamente' }), {
-          status: 201,
+          status: 200,
           headers: corsHeaders
         });
     } catch (error) {

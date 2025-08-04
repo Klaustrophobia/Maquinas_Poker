@@ -17,6 +17,7 @@ export default function MaquinasPage() {
   const [isLogging, setIsLogging] = useState(false);
   const [proveedores, setProveedores] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
+  const [recharge, setRecharge] = useState(false);
 
 
     const [formData, setFormData] = useState({
@@ -26,12 +27,12 @@ export default function MaquinasPage() {
       fecha_adquisicion: "",
       fecha_instalacion: "",
       proveedor_id: 0,
-      estado: "operativa",
+      estado: "Operativo",
       ultima_ubicacion_id: 0,
       ultimo_mantenimiento: "",
       proximo_mantenimiento: "",
       notas: "",
-      usuario_id: 1,
+      usuario_id: 0,
     })
 
     const estados = [
@@ -44,7 +45,7 @@ export default function MaquinasPage() {
 
     const filteredMaquinas = maquinas.filter((maquina) => {
       const matchesSearch =
-        maquina.numero_serie.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        maquina.numero_serie?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         maquina.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
         maquina.modelo.toLowerCase().includes(searchTerm.toLowerCase())
       const matchesEstado = filterEstado === "" || maquina.estado === filterEstado
@@ -56,55 +57,52 @@ export default function MaquinasPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    console.log("Form Data:", formData);
 
     if (editingMaquina) {
-      // Actualizar máquina existente
-      const modificarMaquina = {
-        numero_serie: formData.numero_serie,
-        nombre: formData.nombre,
-        modelo: formData.modelo,
-        fecha_adquisicion: formData.fecha_adquisicion,
-        fecha_instalacion: formData.fecha_instalacion,
-        proveedor_id: formData.proveedor_id,
-        estado: formData.estado,
-        ultima_ubicacion_id: formData.ultima_ubicacion_id,
-        ultimo_mantenimiento: formData.ultimo_mantenimiento || null,
-        proximo_mantenimiento: formData.proximo_mantenimiento,
-        notas: formData.notas,
-        usuario_id: formData.usuario_id,
-      };
 
       try {
-        const response = await fetch('http://localhost:4000/api/maquinas', {
+        const response = await fetch('http://localhost:4000/api/inventario/maquinas', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({
             id: editingMaquina.id,
-            maquinaData: modificarMaquina,
+            numero_serie: formData.numero_serie,
+            nombre: formData.nombre,
+            modelo: formData.modelo,
+            fecha_adquisicion: formData.fecha_adquisicion,
+            fecha_instalacion: formData.fecha_instalacion,
+            estado: formData.estado,
+            ultima_ubicacion_id: formData.ultima_ubicacion_id,
+            usuario_id: formData.usuario_id,
+            proveedor_id: formData.proveedor_id,
+            ultimo_mantenimiento: formData.ultimo_mantenimiento,
+            proximo_mantenimiento: formData.proximo_mantenimiento,
+            notas: formData.notas
           }),
         });
 
         if (response.ok) {
           setIsLogging(true);
           setShowModal(false);
-          setMaquinas(maquinas.map((m) =>
-            m.id === editingMaquina.id ? { ...m, ...modificarMaquina } : m
-          ));
+          setRecharge(recharge => !recharge);
         } else {
           console.error('Error al actualizar la máquina:', response.statusText);
         }
       } catch (error) {
         console.error('Error al actualizar la máquina:', error);
       } finally {
-        resetForm();
-        setIsLoading(false);
-        setIsLogging(false);
-      }
+      resetForm()
+      setIsLoading(false);
+      setIsLogging(false);
+      setShowModal(false)
+     }
 
     } else {
       // Crear nueva máquina
+      console.log("Creando nueva máquina con datos:", formData);
       try {
-        const response = await fetch('http://localhost:4000/api/maquinas', {
+        const response = await fetch('http://localhost:4000/api/inventario/maquinas', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({
@@ -113,31 +111,30 @@ export default function MaquinasPage() {
             modelo: formData.modelo,
             fecha_adquisicion: formData.fecha_adquisicion,
             fecha_instalacion: formData.fecha_instalacion,
-            proveedor_id: formData.proveedor_id,
             estado: formData.estado,
             ultima_ubicacion_id: formData.ultima_ubicacion_id,
-            ultimo_mantenimiento: formData.ultimo_mantenimiento || null,
-            proximo_mantenimiento: formData.proximo_mantenimiento,
-            notas: formData.notas,
             usuario_id: formData.usuario_id,
+            proveedor_id: formData.proveedor_id,
+            ultimo_mantenimiento: formData.ultimo_mantenimiento,
+            proximo_mantenimiento: formData.proximo_mantenimiento,
+            notas: formData.notas
           }),
         });
 
         if (response.ok) {
           setIsLogging(true);
-          const data = await response.json();
-          setMaquinas([...maquinas, data.newMaquina]); // Ajusta según la respuesta real
+          setRecharge(recharge => !recharge);
         } else {
           console.error('Error al crear la máquina:', response.statusText);
         }
       } catch (error) {
         console.error('Error al crear la máquina:', error);
       } finally {
-        resetForm();
-        setIsLoading(false);
-        setIsLogging(false);
-        setShowModal(false);
-      }
+      resetForm()
+      setIsLoading(false);
+      setIsLogging(false);
+      setShowModal(false)
+     }
     }
   };
 
@@ -149,13 +146,13 @@ export default function MaquinasPage() {
       modelo: maquina.modelo,
       fecha_adquisicion: maquina.fecha_adquisicion,
       fecha_instalacion: maquina.fecha_instalacion,
-      proveedor_id: maquina.proveedor_id,
+      proveedor_id: maquina.proveedor.id,
       estado: maquina.estado,
-      ultima_ubicacion_id: maquina.ultima_ubicacion_id,
+      ultima_ubicacion_id: maquina.ubicacion.id,
       ultimo_mantenimiento: maquina.ultimo_mantenimiento || "",
       proximo_mantenimiento: maquina.proximo_mantenimiento,
       notas: maquina.notas,
-      usuario_id: maquina.usuario_id,
+      usuario_id: maquina?.usuario?.id,
     })
     setShowModal(true)
   }
@@ -163,10 +160,9 @@ export default function MaquinasPage() {
   const handleDelete = async (id) => {
     if (confirm("¿Estás seguro de que quieres eliminar esta máquina?")) {
       try {
-        const response = await fetch(`http://localhost:4000/api/maquinas`, {
+        const response = await fetch(`http://localhost:4000/api/inventario/maquinas?id=${id}`, {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify({ id }),
         });
 
         if (response.ok) {
@@ -189,12 +185,12 @@ export default function MaquinasPage() {
       fecha_adquisicion: "",
       fecha_instalacion: "",
       proveedor_id: 0,
-      estado: "operativa",
+      estado: "Operativo",
       ultima_ubicacion_id: 0,
       ultimo_mantenimiento: "",
       proximo_mantenimiento: "",
       notas: "",
-      usuario_id: 1,
+      usuario_id: 0,
     })
     setEditingMaquina(null)
   }
@@ -208,6 +204,12 @@ export default function MaquinasPage() {
     return estados.find((e) => e.value === estado) || { value: estado, label: estado, color: "secondary" }
   }
 
+  function formatDateToYMD(date) {
+  const d = new Date(date);
+  return d.toISOString().split('T')[0]; // Retorna "2025-06-04"
+}
+
+
   useEffect(() => {
   const fetchData = async () => {
     try {
@@ -217,7 +219,6 @@ export default function MaquinasPage() {
       });
 
       const data = await response.json();
-      console.log("Datos de máquinas:", data);
       setMaquinas(data);
     } catch (error) {
       console.error('Error al obtener datos de máquinas:', error);
@@ -262,7 +263,8 @@ export default function MaquinasPage() {
         });
 
         const data = await response.json();
-        setUsuarios(data);
+        const usuariosFiltrados = data.filter(usuario => usuario.rol === "cliente");
+        setUsuarios(usuariosFiltrados);
       } catch (error) {
         console.error('Error al obtener datos de usuarios:', error);
       }
@@ -272,7 +274,7 @@ export default function MaquinasPage() {
     obtenerProveedores();
     obtenerUsuarios();
     fetchData();
-  }, []);
+  }, [recharge]);
 
   if (loadingData) {
     return (
@@ -391,25 +393,25 @@ export default function MaquinasPage() {
                             </td>
                             <td>
                               {maquina.ultimo_mantenimiento
-                                ? new Date(maquina.ultimo_mantenimiento).toLocaleDateString()
+                                ? formatDateToYMD(maquina.ultimo_mantenimiento)
                                 : "N/A"}
                             </td>
                             <td>
                               <span
                                 className={`badge ${
-                                  new Date(maquina.proximo_mantenimiento) < new Date()
+                                  formatDateToYMD(maquina.proximo_mantenimiento) < formatDateToYMD(new Date())
                                     ? "bg-danger"
-                                    : new Date(maquina.proximo_mantenimiento) <
-                                        new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+                                    : formatDateToYMD(maquina.proximo_mantenimiento) <
+                                        formatDateToYMD(Date.now() + 7 * 24 * 60 * 60 * 1000)
                                       ? "bg-warning"
                                       : "bg-success"
                                 }`}
                               >
-                                {new Date(maquina.proximo_mantenimiento).toLocaleDateString()}
+                                {formatDateToYMD(maquina.proximo_mantenimiento)}
                               </span>
                             </td>
                             <td>
-                              <small>{maquina.usuario.nombre}</small>
+                              <small>{maquina?.usuario?.nombre}</small>
                             </td>
                             <td>
                               <div className="btn-group" role="group">
@@ -521,7 +523,7 @@ export default function MaquinasPage() {
                       <input
                         type="date"
                         className="form-control"
-                        value={new Date(formData.fecha_adquisicion)}
+                        value={formatDateToYMD(formData.fecha_adquisicion)}
                         onChange={(e) => setFormData({ ...formData, fecha_adquisicion: e.target.value })}
                         required
                       />
@@ -531,7 +533,7 @@ export default function MaquinasPage() {
                       <input
                         type="date"
                         className="form-control"
-                        value={new Date(formData.fecha_instalacion)}
+                        value={formatDateToYMD(formData.fecha_instalacion)}
                         onChange={(e) => setFormData({ ...formData, fecha_instalacion: e.target.value })}
                         required
                       />
@@ -581,7 +583,7 @@ export default function MaquinasPage() {
                       <input
                         type="date"
                         className="form-control"
-                        value={new Date(formData.ultimo_mantenimiento)}
+                        value={formatDateToYMD(formData.ultimo_mantenimiento)}
                         onChange={(e) => setFormData({ ...formData, ultimo_mantenimiento: e.target.value })}
                       />
                     </div>
@@ -590,7 +592,7 @@ export default function MaquinasPage() {
                       <input
                         type="date"
                         className="form-control"
-                        value={new Date(formData.proximo_mantenimiento)}
+                        value={formatDateToYMD(formData.proximo_mantenimiento)}
                         onChange={(e) => setFormData({ ...formData, proximo_mantenimiento: e.target.value })}
                         required
                       />
